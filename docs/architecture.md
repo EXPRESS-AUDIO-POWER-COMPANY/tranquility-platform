@@ -9,10 +9,10 @@ No production database, authentication, payment processing, customer persistence
 ## Source of truth
 
 - Canonical source: GitHub repository
-- Default production branch: `main`
-- Active integration branch: `development`
+- Active development branch: `main`
 - Local development: standard Node.js + npm + VS Code compatible
 - Lovable: secondary development/deployment environment only; it must not become the only place the source can be maintained
+- Additional branches: create only when the repository owner explicitly requests isolation
 
 ## Planned infrastructure boundaries
 

@@ -9,7 +9,7 @@ export default {
           ivory: '#F7F3EA',
           stone: '#D7D0C4',
           sage: '#8C9B88',
-          moss: '#657461',
+          moss: '#5F6D5C',
           taupe: '#A99581',
           charcoal: '#232825',
         },

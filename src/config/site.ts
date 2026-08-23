@@ -5,8 +5,9 @@ export const siteConfig = {
   shortName: 'Tranquility',
   tagline: 'Come home to tranquility.',
   description:
-    'Professional residential and commercial cleaning across Dallas-Fort Worth with simple booking, clear service options, and thoughtful care for every space.',
+    'Professional residential and commercial cleaning across Dallas-Fort Worth with clear service options, thoughtful property planning, and custom quote support.',
   siteUrl: configuredSiteUrl || 'https://tranquility.cleaning',
+  onlineBookingEnabled: false,
   phone: '(945) 402-3260',
   phoneHref: 'tel:+19454023260',
   email: 'tlcllc26@gmail.com',

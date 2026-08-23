@@ -102,6 +102,7 @@ export function BookingEstimator() {
 
   const today = useMemo(getLocalToday, [])
   const livePricing = pricingConfig.livePricingEnabled
+  const hasManualQuoteThreshold = Number.isFinite(pricingConfig.manualQuoteAboveSquareFeet)
 
   const estimateState = useMemo<EstimateState>(() => {
     try {
@@ -307,7 +308,9 @@ export function BookingEstimator() {
                   value={squareFootage}
                 />
                 <span className="text-xs font-normal text-black/50" id="square-footage-help">
-                  Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to a custom quote for a closer review.
+                  {hasManualQuoteThreshold
+                    ? `Homes above ${pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to a custom quote for a closer review.`
+                    : 'Square footage helps Tranquility understand the property size and determine the appropriate review path.'}
                 </span>
               </label>
               <label className="grid gap-2 text-sm font-semibold sm:col-span-2">

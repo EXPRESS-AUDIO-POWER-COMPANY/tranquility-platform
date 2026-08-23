@@ -1,54 +1,20 @@
 import { ChevronDown } from 'lucide-react'
 
 const faqs = [
-  [
-    'How does residential pricing work?',
-    'Residential pricing begins with the size and layout of the home, then adjusts for the selected service, frequency, rooms, pets, and optional add-ons. Larger or unusually detailed jobs may move to a custom quote.',
-  ],
-  [
-    'What is the difference between standard and deep cleaning?',
-    'Standard cleaning is the recurring or routine maintenance path. Deep cleaning is designed for spaces that need more time and detail beyond normal maintenance, especially kitchens, bathrooms, fixtures, buildup, and commonly missed surfaces.',
-  ],
-  [
-    'Can pets stay home during the cleaning?',
-    'Yes, as long as they do not interfere with safe service completion. Animals that may become aggressive, highly anxious, or disruptive should be secured before the cleaning team arrives.',
-  ],
-  [
-    'Can the final service price change?',
-    'A residential estimate is based on the details provided. If the actual property condition or requested scope is materially different, Tranquility can review the job before confirming the final service scope and price.',
-  ],
-  [
-    'What is a virtual consultation?',
-    'A virtual consultation is the custom-quote path for customers who want a closer review. You can describe the space and prepare interior property photos so the scope can be evaluated more accurately.',
-  ],
-  [
-    'Do you offer recurring cleaning?',
-    'Yes. The residential experience supports one-time, weekly, biweekly, and monthly service options.',
-  ],
-  [
-    'Do you clean commercial spaces?',
-    'Yes. Commercial cleaning is handled through a custom quote because property size, traffic, access, frequency, and service scope vary from business to business.',
-  ],
-  [
-    'What add-ons can I request?',
-    'Available add-ons include laundry, inside oven, inside refrigerator, dishwasher detail, spot or stain treatment, spot carpet cleaning, range hood or vent detail, and excess pet hair. Some specialty items may require review.',
-  ],
-  [
-    'Do I have to be home during service?',
-    'Not necessarily. Customers can provide lawful access instructions and property notes before service. Access details should be accurate and should never require a cleaning professional to enter an unsafe or unauthorized area.',
-  ],
-  [
-    'What should I tell you before the appointment?',
-    'Share anything that affects access, time, safety, or scope: pets, gate or entry details, rooms that should not be entered, specialty surfaces, stains, unusual buildup, parking limitations, or other conditions the team should know about.',
-  ],
-  [
-    'How does scheduling work?',
-    'Customers choose a preferred date and arrival window. The request is not a guaranteed appointment until Tranquility confirms service availability for the address, scope, and expected duration.',
-  ],
-  [
-    'What if I need to change my appointment?',
-    'Contact Tranquility as early as possible when a date or access plan changes. Any final rescheduling or cancellation terms that apply to a confirmed reservation will be shown as part of the production booking process.',
-  ],
+  ['How does residential pricing work?', 'Residential pricing begins with the size and layout of the home, then adjusts for the selected service, frequency, rooms, pets, and optional add-ons. Larger or unusually detailed jobs may move to a custom quote.'],
+  ['What is the difference between standard and deep cleaning?', 'Standard cleaning is the recurring or routine maintenance path. Deep cleaning is designed for spaces that need more time and detail beyond normal maintenance, especially kitchens, bathrooms, fixtures, buildup, and commonly missed surfaces.'],
+  ['Can pets stay home during the cleaning?', 'Yes, as long as they do not interfere with safe service completion. Animals that may become aggressive, highly anxious, or disruptive should be secured before the cleaning team arrives.'],
+  ['Can the final service price change?', 'A residential estimate is based on the details provided. If the actual property condition or requested scope is materially different, Tranquility can review the job before confirming the final service scope and price.'],
+  ['What is a virtual consultation?', 'A virtual consultation is the custom-quote path for customers who want a closer review. You can describe the space and select interior property photos so the scope can be evaluated more accurately.'],
+  ['Do you offer recurring cleaning?', 'Yes. The residential experience supports one-time, weekly, biweekly, and monthly service options.'],
+  ['Do I need to sign a long-term contract?', 'Tranquility offers one-time and recurring service options without requiring customers to choose a long-term service plan just to request cleaning. Any terms that apply to a confirmed recurring schedule should be reviewed when the service is finalized.'],
+  ['Do I need to provide cleaning supplies?', 'Tranquility is designed to arrive prepared for the agreed cleaning scope. If you want specific products used, have specialty surfaces, or prefer a particular product type, share that information before service so the request can be reviewed.'],
+  ['Do you clean commercial spaces?', 'Yes. Commercial cleaning is handled through a custom quote because property size, traffic, access, frequency, and service scope vary from business to business.'],
+  ['What add-ons can I request?', 'Available add-ons include laundry, inside oven, inside refrigerator, dishwasher detail, spot or stain treatment, spot carpet cleaning, range hood or vent detail, and excess pet hair. Some specialty items may require review.'],
+  ['Do I have to be home during service?', 'Not necessarily. Customers can provide lawful access instructions and property notes before service. Access details should be accurate and should never require a cleaning professional to enter an unsafe or unauthorized area.'],
+  ['What should I tell you before the appointment?', 'Share anything that affects access, time, safety, or scope: pets, gate or entry details, rooms that should not be entered, specialty surfaces, stains, unusual buildup, parking limitations, or other conditions the team should know about.'],
+  ['How does scheduling work?', 'Customers choose a preferred date and arrival window. The request is not a guaranteed appointment until Tranquility confirms service availability for the address, scope, and expected duration.'],
+  ['What if I need to change my appointment?', 'Contact Tranquility as early as possible when a date or access plan changes. Any final rescheduling or cancellation terms that apply to a confirmed reservation will be reviewed with the booking.'],
 ]
 
 export function Faq() {

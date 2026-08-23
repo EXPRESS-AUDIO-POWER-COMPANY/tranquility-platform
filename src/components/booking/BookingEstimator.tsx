@@ -1,12 +1,24 @@
-import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, MapPin, UserRound } from 'lucide-react'
+import {
+  ArrowLeft,
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  Home,
+  Info,
+  MapPin,
+  ShieldCheck,
+  UserRound,
+} from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { Button, ButtonLink } from '@/components/ui/Button'
 import { pricingConfig } from '@/config/pricing'
 import { calculateBookingEstimate } from '@/lib/pricing'
 import type { BookingEstimate, Frequency, ServiceType } from '@/types/booking'
 
-const numberOptions = [0, 1, 2, 3, 4, 5, 6]
+const numberOptions = Array.from({ length: 11 }, (_, index) => index)
 const steps = ['Service', 'Rooms', 'Extras', 'Schedule'] as const
+
+type PropertyCondition = 'routine' | 'needs-attention' | 'not-sure'
 
 type RoomCountFieldProps = {
   label: string
@@ -31,11 +43,30 @@ function RoomCountField({ label, value, onChange }: RoomCountFieldProps) {
   )
 }
 
+function getLocalToday() {
+  const now = new Date()
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60_000)
+  return local.toISOString().slice(0, 10)
+}
+
+function serviceLabel(serviceType: ServiceType) {
+  if (serviceType === 'deep') return 'Deep clean'
+  if (serviceType === 'move-in-out') return 'Move-in / move-out'
+  return 'Standard clean'
+}
+
+function frequencyLabel(frequency: Frequency) {
+  if (frequency === 'one-time') return 'One-time'
+  if (frequency === 'biweekly') return 'Biweekly'
+  return frequency.charAt(0).toUpperCase() + frequency.slice(1)
+}
+
 export function BookingEstimator() {
   const [step, setStep] = useState(1)
   const [serviceType, setServiceType] = useState<ServiceType>('standard')
   const [frequency, setFrequency] = useState<Frequency>('one-time')
   const [squareFootage, setSquareFootage] = useState(1500)
+  const [propertyCondition, setPropertyCondition] = useState<PropertyCondition>('routine')
   const [bedrooms, setBedrooms] = useState(3)
   const [fullBathrooms, setFullBathrooms] = useState(2)
   const [halfBathrooms, setHalfBathrooms] = useState(0)
@@ -44,9 +75,11 @@ export function BookingEstimator() {
   const [kitchens, setKitchens] = useState(1)
   const [laundryRooms, setLaundryRooms] = useState(1)
   const [otherRooms, setOtherRooms] = useState(0)
+  const [otherSpaceDetails, setOtherSpaceDetails] = useState('')
   const [petsPresent, setPetsPresent] = useState(false)
   const [petDetails, setPetDetails] = useState('')
   const [addOnIds, setAddOnIds] = useState<string[]>([])
+  const [serviceNotes, setServiceNotes] = useState('')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
@@ -55,7 +88,10 @@ export function BookingEstimator() {
   const [postalCode, setPostalCode] = useState('')
   const [preferredDate, setPreferredDate] = useState('')
   const [arrivalWindow, setArrivalWindow] = useState('Morning • 8 AM–12 PM')
+  const [accessInstructions, setAccessInstructions] = useState('')
   const [readyForReview, setReadyForReview] = useState(false)
+
+  const today = useMemo(getLocalToday, [])
 
   const estimateState = useMemo<EstimateState>(() => {
     try {
@@ -99,22 +135,46 @@ export function BookingEstimator() {
     addOnIds,
   ])
 
-  const contactComplete = [fullName, email, phone, streetAddress, city, postalCode, preferredDate, arrivalWindow]
-    .every((value) => value.trim().length > 0)
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+  const phoneValid = phone.replace(/\D/g, '').length >= 10
+  const postalCodeValid = /^\d{5}(?:-\d{4})?$/.test(postalCode.trim())
+  const dateValid = preferredDate.length > 0 && preferredDate >= today
+  const otherSpaceComplete = otherRooms === 0 || otherSpaceDetails.trim().length >= 2
+  const petDetailsComplete = !petsPresent || petDetails.trim().length >= 2
+  const contactComplete =
+    fullName.trim().length >= 2 &&
+    emailValid &&
+    phoneValid &&
+    streetAddress.trim().length >= 4 &&
+    city.trim().length >= 2 &&
+    postalCodeValid &&
+    dateValid &&
+    arrivalWindow.trim().length > 0
+
+  const selectedAddOns = pricingConfig.addOns.filter((addOn) => addOnIds.includes(addOn.id))
+  const estimate = estimateState.estimate
+  const conditionReviewRecommended = propertyCondition !== 'routine' || selectedAddOns.some((addOn) => addOn.requiresReview)
+
+  function resetReview() {
+    setReadyForReview(false)
+  }
 
   function toggleAddOn(id: string) {
-    setAddOnIds((current) =>
-      current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
-    )
-    setReadyForReview(false)
+    setAddOnIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])
+    resetReview()
   }
 
   function goToStep(nextStep: number) {
     setStep(Math.max(1, Math.min(4, nextStep)))
-    setReadyForReview(false)
+    resetReview()
   }
 
-  const estimate = estimateState.estimate
+  function canContinue() {
+    if (step === 1) return !estimateState.error
+    if (step === 2) return otherSpaceComplete
+    if (step === 3) return petDetailsComplete
+    return contactComplete
+  }
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
@@ -146,12 +206,12 @@ export function BookingEstimator() {
           <section className="pt-7">
             <p className="eyebrow">Service profile</p>
             <h2 className="mt-3 font-serif text-3xl">Start with the cleaning you need.</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Choose the service, frequency, and approximate size of the home. The estimate updates as you go.</p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Choose the residential service, frequency, size, and general condition. The planning estimate updates as you go.</p>
 
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold">
                 Service type
-                <select className="field" value={serviceType} onChange={(event) => { setServiceType(event.target.value as ServiceType); setReadyForReview(false) }}>
+                <select className="field" value={serviceType} onChange={(event) => { setServiceType(event.target.value as ServiceType); resetReview() }}>
                   <option value="standard">Standard clean</option>
                   <option value="deep">Deep clean</option>
                   <option value="move-in-out">Move-in / move-out</option>
@@ -159,7 +219,7 @@ export function BookingEstimator() {
               </label>
               <label className="grid gap-2 text-sm font-semibold">
                 Frequency
-                <select className="field" value={frequency} onChange={(event) => { setFrequency(event.target.value as Frequency); setReadyForReview(false) }}>
+                <select className="field" value={frequency} onChange={(event) => { setFrequency(event.target.value as Frequency); resetReview() }}>
                   <option value="one-time">One-time</option>
                   <option value="weekly">Weekly</option>
                   <option value="biweekly">Biweekly</option>
@@ -172,12 +232,21 @@ export function BookingEstimator() {
                   aria-describedby="square-footage-help"
                   className="field"
                   min={pricingConfig.minimumSquareFeet}
-                  onChange={(event) => { setSquareFootage(Number(event.target.value)); setReadyForReview(false) }}
+                  onChange={(event) => { setSquareFootage(Number(event.target.value)); resetReview() }}
                   step="50"
                   type="number"
                   value={squareFootage}
                 />
                 <span className="text-xs font-normal text-black/50" id="square-footage-help">Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to a custom quote for a closer review.</span>
+              </label>
+              <label className="grid gap-2 text-sm font-semibold sm:col-span-2">
+                Current property condition
+                <select className="field" value={propertyCondition} onChange={(event) => { setPropertyCondition(event.target.value as PropertyCondition); resetReview() }}>
+                  <option value="routine">Routine / normally maintained</option>
+                  <option value="needs-attention">Needs extra attention</option>
+                  <option value="not-sure">Not sure — I want guidance</option>
+                </select>
+                <span className="text-xs font-normal text-black/50">Condition does not automatically change this planning estimate. It helps identify when a closer review may be useful.</span>
               </label>
             </div>
           </section>
@@ -187,7 +256,7 @@ export function BookingEstimator() {
           <section className="pt-7">
             <p className="eyebrow">Rooms and spaces</p>
             <h2 className="mt-3 font-serif text-3xl">Build the property profile.</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Select the rooms that should be considered in the cleaning scope.</p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Select the spaces that should be considered in the cleaning scope.</p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
               <RoomCountField label="Bedrooms" onChange={setBedrooms} value={bedrooms} />
               <RoomCountField label="Full bathrooms" onChange={setFullBathrooms} value={fullBathrooms} />
@@ -198,6 +267,13 @@ export function BookingEstimator() {
               <RoomCountField label="Laundry rooms" onChange={setLaundryRooms} value={laundryRooms} />
               <RoomCountField label="Other rooms / spaces" onChange={setOtherRooms} value={otherRooms} />
             </div>
+            {otherRooms > 0 ? (
+              <label className="mt-6 grid gap-2 text-sm font-semibold">
+                Describe the other room(s) or space(s)
+                <textarea className="field min-h-24" onChange={(event) => { setOtherSpaceDetails(event.target.value); resetReview() }} placeholder="Example: game room, office, sunroom, loft, mud room." value={otherSpaceDetails} />
+                {!otherSpaceComplete ? <span className="text-xs font-normal text-red-700">Add a short description for the additional spaces.</span> : null}
+              </label>
+            ) : null}
           </section>
         ) : null}
 
@@ -205,22 +281,18 @@ export function BookingEstimator() {
           <section className="pt-7">
             <p className="eyebrow">Pets and add-ons</p>
             <h2 className="mt-3 font-serif text-3xl">Personalize the visit.</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Share pet information and select any additional cleaning details that should be considered.</p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Share pet information, optional extras, and anything that can affect cleaning scope.</p>
 
             <div className="mt-8 rounded-2xl border border-black/10 p-5">
               <label className="flex items-center gap-3 text-sm font-medium">
-                <input checked={petsPresent} onChange={(event) => { setPetsPresent(event.target.checked); setReadyForReview(false) }} type="checkbox" />
+                <input checked={petsPresent} onChange={(event) => { setPetsPresent(event.target.checked); resetReview() }} type="checkbox" />
                 Pets will be present during service
               </label>
               {petsPresent ? (
                 <label className="mt-4 grid gap-2 text-sm font-semibold">
                   Pet type, count, and anything the cleaning team should know
-                  <textarea
-                    className="field min-h-24"
-                    onChange={(event) => { setPetDetails(event.target.value); setReadyForReview(false) }}
-                    placeholder="Example: 2 dogs. Friendly and usually stay in the living room."
-                    value={petDetails}
-                  />
+                  <textarea className="field min-h-24" onChange={(event) => { setPetDetails(event.target.value); resetReview() }} placeholder="Example: 2 dogs. Friendly and usually stay in the living room." value={petDetails} />
+                  {!petDetailsComplete ? <span className="text-xs font-normal text-red-700">Add a short pet note before continuing.</span> : null}
                 </label>
               ) : null}
               <p className="mt-3 text-xs leading-5 text-black/55">Pets may remain in the home when they do not interfere with safe service completion. Please secure any animal that may become aggressive, highly anxious, or disruptive.</p>
@@ -240,6 +312,12 @@ export function BookingEstimator() {
                 ))}
               </div>
             </fieldset>
+
+            <label className="mt-7 grid gap-2 text-sm font-semibold">
+              Cleaning notes or priority areas <span className="font-normal text-black/40">(optional)</span>
+              <textarea className="field min-h-28" maxLength={1200} onChange={(event) => { setServiceNotes(event.target.value); resetReview() }} placeholder="Example: Please focus extra attention on the kitchen and guest bathroom." value={serviceNotes} />
+              <span className="text-right text-xs font-normal text-black/35">{serviceNotes.length}/1200</span>
+            </label>
           </section>
         ) : null}
 
@@ -247,46 +325,55 @@ export function BookingEstimator() {
           <section className="pt-7">
             <p className="eyebrow">Schedule and customer details</p>
             <h2 className="mt-3 font-serif text-3xl">Where and when should service happen?</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Complete the reservation profile. Secure online submission and payment activation will be connected before production launch.</p>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Complete the reservation profile. A valid payment method will be required when online reservations are activated; no card information is collected in this frontend milestone.</p>
 
             <div className="mt-8 grid gap-5 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold">
                 <span className="flex items-center gap-2"><UserRound className="size-4 text-tranquility-moss" aria-hidden="true" /> Full name</span>
-                <input className="field" onChange={(event) => { setFullName(event.target.value); setReadyForReview(false) }} value={fullName} />
+                <input autoComplete="name" className="field" onChange={(event) => { setFullName(event.target.value); resetReview() }} value={fullName} />
               </label>
               <label className="grid gap-2 text-sm font-semibold">
                 Email
-                <input className="field" inputMode="email" onChange={(event) => { setEmail(event.target.value); setReadyForReview(false) }} type="email" value={email} />
+                <input autoComplete="email" className="field" inputMode="email" onChange={(event) => { setEmail(event.target.value); resetReview() }} type="email" value={email} />
+                {email && !emailValid ? <span className="text-xs font-normal text-red-700">Enter a valid email address.</span> : null}
               </label>
               <label className="grid gap-2 text-sm font-semibold">
                 Phone
-                <input className="field" inputMode="tel" onChange={(event) => { setPhone(event.target.value); setReadyForReview(false) }} type="tel" value={phone} />
+                <input autoComplete="tel" className="field" inputMode="tel" onChange={(event) => { setPhone(event.target.value); resetReview() }} type="tel" value={phone} />
+                {phone && !phoneValid ? <span className="text-xs font-normal text-red-700">Enter a phone number with at least 10 digits.</span> : null}
               </label>
               <label className="grid gap-2 text-sm font-semibold sm:col-span-2">
                 <span className="flex items-center gap-2"><MapPin className="size-4 text-tranquility-moss" aria-hidden="true" /> Street address</span>
-                <input className="field" onChange={(event) => { setStreetAddress(event.target.value); setReadyForReview(false) }} value={streetAddress} />
+                <input autoComplete="street-address" className="field" onChange={(event) => { setStreetAddress(event.target.value); resetReview() }} value={streetAddress} />
               </label>
               <label className="grid gap-2 text-sm font-semibold">
                 City
-                <input className="field" onChange={(event) => { setCity(event.target.value); setReadyForReview(false) }} value={city} />
+                <input autoComplete="address-level2" className="field" onChange={(event) => { setCity(event.target.value); resetReview() }} value={city} />
               </label>
               <label className="grid gap-2 text-sm font-semibold">
                 ZIP code
-                <input className="field" inputMode="numeric" onChange={(event) => { setPostalCode(event.target.value); setReadyForReview(false) }} value={postalCode} />
+                <input autoComplete="postal-code" className="field" inputMode="numeric" onChange={(event) => { setPostalCode(event.target.value); resetReview() }} value={postalCode} />
+                {postalCode && !postalCodeValid ? <span className="text-xs font-normal text-red-700">Enter a 5-digit ZIP code.</span> : null}
               </label>
               <label className="grid gap-2 text-sm font-semibold">
                 <span className="flex items-center gap-2"><CalendarDays className="size-4 text-tranquility-moss" aria-hidden="true" /> Preferred date</span>
-                <input className="field" onChange={(event) => { setPreferredDate(event.target.value); setReadyForReview(false) }} type="date" value={preferredDate} />
+                <input className="field" min={today} onChange={(event) => { setPreferredDate(event.target.value); resetReview() }} type="date" value={preferredDate} />
+                {preferredDate && !dateValid ? <span className="text-xs font-normal text-red-700">Choose today or a future date.</span> : null}
               </label>
               <label className="grid gap-2 text-sm font-semibold">
                 Preferred arrival window
-                <select className="field" onChange={(event) => { setArrivalWindow(event.target.value); setReadyForReview(false) }} value={arrivalWindow}>
+                <select className="field" onChange={(event) => { setArrivalWindow(event.target.value); resetReview() }} value={arrivalWindow}>
                   <option>Morning • 8 AM–12 PM</option>
                   <option>Afternoon • 12 PM–4 PM</option>
                   <option>Flexible • Any available window</option>
                 </select>
               </label>
             </div>
+
+            <label className="mt-6 grid gap-2 text-sm font-semibold">
+              Access or arrival notes <span className="font-normal text-black/40">(optional)</span>
+              <textarea className="field min-h-24" maxLength={800} onChange={(event) => { setAccessInstructions(event.target.value); resetReview() }} placeholder="Gate instructions, parking notes, front desk, call-on-arrival preference, or other useful access information." value={accessInstructions} />
+            </label>
 
             {estimate?.requiresManualQuote ? (
               <div className="mt-8 rounded-2xl bg-tranquility-stone/30 p-5">
@@ -296,8 +383,8 @@ export function BookingEstimator() {
               </div>
             ) : (
               <div className="mt-8">
-                <Button disabled={!contactComplete || Boolean(estimateState.error)} onClick={() => setReadyForReview(true)} type="button">Review booking request <ArrowRight className="ml-2 size-4" /></Button>
-                {!contactComplete ? <p className="mt-3 text-xs text-black/45">Complete the customer, address, and preferred scheduling fields to review the request.</p> : null}
+                <Button disabled={!contactComplete || Boolean(estimateState.error)} onClick={() => setReadyForReview(true)} type="button">Review reservation profile <ArrowRight className="ml-2 size-4" /></Button>
+                {!contactComplete ? <p className="mt-3 text-xs text-black/45">Complete the required customer, address, and scheduling fields with valid information to review the profile.</p> : null}
               </div>
             )}
 
@@ -306,19 +393,28 @@ export function BookingEstimator() {
                 <div className="flex items-start gap-3">
                   <CheckCircle2 className="mt-1 size-5 shrink-0 text-tranquility-moss" aria-hidden="true" />
                   <div>
-                    <p className="font-serif text-2xl">Booking profile ready for secure submission.</p>
-                    <p className="mt-2 text-sm leading-6 text-black/58">{fullName}, {streetAddress}, {city} {postalCode} • {preferredDate} • {arrivalWindow}</p>
-                    <p className="mt-2 text-sm leading-6 text-black/58">Current planning estimate: <strong>${estimate.total}</strong>. The secure submission and payment step remains intentionally disconnected until the production payment system is implemented.</p>
+                    <p className="font-serif text-2xl">Reservation profile ready for final submission.</p>
+                    <p className="mt-2 text-sm leading-6 text-black/58">The customer-facing information is complete. Secure persistence and payment authorization remain intentionally deferred until the production backend is connected.</p>
                   </div>
                 </div>
+                <dl className="mt-6 grid gap-3 border-t border-black/8 pt-5 text-sm sm:grid-cols-2">
+                  <div><dt className="text-black/40">Customer</dt><dd className="mt-1 font-semibold">{fullName}</dd></div>
+                  <div><dt className="text-black/40">Service</dt><dd className="mt-1 font-semibold">{serviceLabel(serviceType)} • {frequencyLabel(frequency)}</dd></div>
+                  <div><dt className="text-black/40">Property</dt><dd className="mt-1 font-semibold">{squareFootage.toLocaleString()} sq ft • {city}, {postalCode}</dd></div>
+                  <div><dt className="text-black/40">Preferred time</dt><dd className="mt-1 font-semibold">{preferredDate} • {arrivalWindow}</dd></div>
+                  <div><dt className="text-black/40">Estimate</dt><dd className="mt-1 font-semibold">${estimate.total}</dd></div>
+                  <div><dt className="text-black/40">Add-ons</dt><dd className="mt-1 font-semibold">{selectedAddOns.length ? selectedAddOns.map((item) => item.name).join(', ') : 'None selected'}</dd></div>
+                </dl>
               </div>
             ) : null}
           </section>
         ) : null}
 
-        <div className="mt-8 flex items-center justify-between border-t border-black/7 pt-6">
-          <Button disabled={step === 1} onClick={() => goToStep(step - 1)} type="button" variant="ghost"><ArrowLeft className="mr-2 size-4" /> Back</Button>
-          {step < 4 ? <Button onClick={() => goToStep(step + 1)} type="button">Continue <ArrowRight className="ml-2 size-4" /></Button> : null}
+        <div className="mt-9 flex flex-wrap items-center justify-between gap-3 border-t border-black/7 pt-6">
+          <Button disabled={step === 1} onClick={() => goToStep(step - 1)} type="button" variant="ghost"><ArrowLeft className="mr-2 size-4" /> Previous</Button>
+          {step < 4 ? (
+            <Button disabled={!canContinue()} onClick={() => goToStep(step + 1)} type="button">Continue <ArrowRight className="ml-2 size-4" /></Button>
+          ) : null}
         </div>
       </div>
 
@@ -345,12 +441,20 @@ export function BookingEstimator() {
               {estimate.addOnTotal > 0 ? <div className="flex justify-between gap-4"><dt>Add-ons</dt><dd>+${estimate.addOnTotal}</dd></div> : null}
             </dl>
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.055] p-4 text-xs leading-6 text-white/58">
-              Step {step} of 4 • {steps[step - 1]}
+              <span className="flex items-start gap-2"><Home className="mt-0.5 size-4 shrink-0 text-tranquility-stone" aria-hidden="true" />{squareFootage.toLocaleString()} sq ft • {bedrooms} bed • {fullBathrooms} full bath • {halfBathrooms} half bath</span>
             </div>
-            <ButtonLink className="mt-5 w-full bg-white text-tranquility-charcoal hover:bg-tranquility-ivory" to="/quote" variant="secondary">Need a closer review?</ButtonLink>
+            {conditionReviewRecommended ? (
+              <div className="mt-4 flex items-start gap-2 rounded-2xl border border-tranquility-stone/25 bg-tranquility-stone/10 p-4 text-xs leading-6 text-white/68">
+                <Info className="mt-0.5 size-4 shrink-0 text-tranquility-stone" aria-hidden="true" />
+                <span>A closer review may be useful because of the property condition or specialty add-ons selected.</span>
+              </div>
+            ) : null}
+            <ButtonLink className="mt-6 w-full bg-white text-tranquility-charcoal hover:bg-tranquility-ivory" to="/quote" variant="secondary">Need a closer review?</ButtonLink>
           </>
         ) : null}
-        <p className="mt-6 border-t border-white/10 pt-5 text-xs leading-6 text-white/48">This is a planning estimate based on the details selected. Property condition, requested scope, and specialty items can change the final service price.</p>
+        <div className="mt-6 border-t border-white/10 pt-5">
+          <p className="flex items-start gap-2 text-xs leading-6 text-white/48"><ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />This is a planning estimate based on the details selected. Property condition, requested scope, and specialty items can change the final service price.</p>
+        </div>
       </aside>
     </div>
   )

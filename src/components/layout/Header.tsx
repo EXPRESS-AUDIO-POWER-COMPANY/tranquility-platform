@@ -9,6 +9,7 @@ import { cn } from '@/lib/utils'
 export function Header() {
   const [open, setOpen] = useState(false)
   const location = useLocation()
+  const reservationLabel = siteConfig.onlineBookingEnabled ? 'Book now' : 'Start request'
 
   useEffect(() => {
     setOpen(false)
@@ -66,7 +67,7 @@ export function Header() {
           ))}
           <div className="ml-1 flex items-center gap-2.5">
             <ButtonLink to="/quote" variant="secondary">Get a quote</ButtonLink>
-            <ButtonLink to="/booking">Book now</ButtonLink>
+            <ButtonLink to="/booking">{reservationLabel}</ButtonLink>
           </div>
         </nav>
 
@@ -99,7 +100,7 @@ export function Header() {
             ))}
             <div className="mt-3 grid grid-cols-2 gap-2 sm:col-span-2 lg:col-span-3">
               <ButtonLink to="/quote" variant="secondary">Get quote</ButtonLink>
-              <ButtonLink to="/booking">Book now</ButtonLink>
+              <ButtonLink to="/booking">{reservationLabel}</ButtonLink>
             </div>
           </div>
         </nav>

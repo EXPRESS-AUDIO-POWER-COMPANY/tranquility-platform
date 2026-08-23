@@ -5,6 +5,8 @@ import { siteConfig } from '@/config/site'
 const pageMeta: Record<string, { title: string; description: string }> = {
   '/': { title: 'Tranquility Cleaning | Professional Cleaning in Dallas-Fort Worth', description: siteConfig.description },
   '/services': { title: 'Cleaning Services | Tranquility Cleaning', description: 'Explore residential, deep cleaning, move-in and move-out, commercial, and specialty cleaning options from Tranquility Cleaning across Dallas-Fort Worth.' },
+  '/residential-cleaning': { title: 'Residential Cleaning in Dallas-Fort Worth | Tranquility Cleaning', description: 'Explore standard, deep, move-in, move-out, one-time, and recurring residential cleaning options from Tranquility Cleaning across Dallas-Fort Worth.' },
+  '/commercial-cleaning': { title: 'Commercial Cleaning in Dallas-Fort Worth | Tranquility Cleaning', description: 'Request quote-based commercial cleaning for offices and professional spaces across Dallas-Fort Worth with property-specific scope, access, timing, and frequency review.' },
   '/service-area': { title: 'Dallas-Fort Worth Service Area | Tranquility Cleaning', description: 'See the Dallas-Fort Worth communities served by Tranquility Cleaning and request availability for nearby residential or commercial properties.' },
   '/booking': { title: 'Build a Cleaning Estimate | Tranquility Cleaning', description: 'Build a residential cleaning estimate based on service type, home size, rooms, pets, frequency, and optional add-ons.' },
   '/quote': { title: 'Request a Virtual Cleaning Quote | Tranquility Cleaning', description: 'Prepare a custom cleaning review for larger homes, commercial spaces, special conditions, or properties that need a closer look.' },

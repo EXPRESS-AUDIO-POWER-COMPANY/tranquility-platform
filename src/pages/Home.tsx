@@ -25,13 +25,13 @@ const services = [
     title: 'Deep Cleaning',
     eyebrow: 'Detailed reset',
     description: 'A more intensive service for kitchens, bathrooms, fixtures, surfaces, and often-missed details.',
-    href: '/booking?service=deep',
+    href: '/deep-cleaning',
   },
   {
     title: 'Move-In / Move-Out',
     eyebrow: 'Fresh transition',
     description: 'A turnover clean for homes between occupants, moving days, and fresh starts.',
-    href: '/booking?service=move-in-out',
+    href: '/move-in-move-out-cleaning',
   },
   {
     title: 'Commercial Cleaning',

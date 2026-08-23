@@ -12,7 +12,7 @@ export function SiteLayout() {
         Skip to content
       </a>
       <Header />
-      <main className="pb-20 md:pb-0" id="main-content">
+      <main className="pb-20 outline-none md:pb-0" id="main-content" tabIndex={-1}>
         <Outlet />
       </main>
       <Footer />

@@ -1,12 +1,28 @@
 import { Menu, Phone, Sparkles, X } from 'lucide-react'
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, NavLink, useLocation } from 'react-router-dom'
 import { ButtonLink } from '@/components/ui/Button'
 import { primaryNav, siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
 
 export function Header() {
   const [open, setOpen] = useState(false)
+  const location = useLocation()
+
+  useEffect(() => {
+    setOpen(false)
+  }, [location.pathname])
+
+  useEffect(() => {
+    if (!open) return
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') setOpen(false)
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [open])
 
   return (
     <header className="sticky top-0 z-50 border-b border-black/5 bg-tranquility-ivory/95 backdrop-blur-xl">
@@ -71,15 +87,14 @@ export function Header() {
                   'rounded-2xl px-4 py-3 text-sm font-semibold text-tranquility-charcoal/70 hover:bg-white',
                   isActive && 'bg-white text-tranquility-charcoal shadow-sm',
                 )}
-                onClick={() => setOpen(false)}
                 to={item.href}
               >
                 {item.label}
               </NavLink>
             ))}
             <div className="mt-3 grid grid-cols-2 gap-2 sm:col-span-2 lg:col-span-3">
-              <ButtonLink onClick={() => setOpen(false)} to="/quote" variant="secondary">Get quote</ButtonLink>
-              <ButtonLink onClick={() => setOpen(false)} to="/booking">Book now</ButtonLink>
+              <ButtonLink to="/quote" variant="secondary">Get quote</ButtonLink>
+              <ButtonLink to="/booking">Book now</ButtonLink>
             </div>
           </div>
         </nav>

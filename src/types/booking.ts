@@ -27,6 +27,29 @@ export interface PricingAddOn {
   requiresReview?: boolean
 }
 
+export interface PricingRules {
+  minimumSquareFeet: number
+  baseBySquareFootage: readonly {
+    max: number
+    price: number
+  }[]
+  manualQuoteAboveSquareFeet: number
+  serviceMultipliers: Readonly<Record<ServiceType, number>>
+  roomIncrements: Readonly<{
+    bedroom: number
+    fullBathroom: number
+    halfBathroom: number
+    livingRoom: number
+    diningRoom: number
+    kitchen: number
+    laundryRoom: number
+    otherRoom: number
+  }>
+  petPresenceIncrement: number
+  frequencyDiscounts: Readonly<Record<Frequency, number>>
+  addOns: readonly PricingAddOn[]
+}
+
 export interface BookingEstimate {
   serviceSubtotal: number
   addOnTotal: number

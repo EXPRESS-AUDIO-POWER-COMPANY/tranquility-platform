@@ -6,67 +6,83 @@ GitHub-first production WebApp for Tranquility Cleaning.
 
 - GitHub is the canonical source of truth.
 - `main` is the active implementation branch and the branch used for day-to-day development.
-- New feature branches will not be created unless the repository owner explicitly requests one.
+- New feature branches are created only when the repository owner explicitly requests isolation.
 - The project must remain portable to VS Code and independent hosting.
-- Lovable may be used as a secondary visual/deployment environment without becoming a lock-in dependency.
-- Supabase and payment infrastructure are intentionally deferred until the customer-facing WebApp is ready for that phase.
-- No secrets, customer data, Supabase service credentials, or payment secrets may be committed to source control.
+- Lovable may be used as a secondary visual/deployment environment without becoming the source of truth or introducing code drift.
+- Supabase and payment infrastructure remain separated from the public frontend until a dedicated Tranquility environment is provisioned and verified.
+- No secrets, customer data, service-role credentials, payment secrets, or production environment files may be committed.
 
-## Current premium frontend milestone
+## Current customer experience
 
-Implemented customer-facing scope:
+Implemented public scope:
 
-- premium responsive Home experience
-- Services overview
-- four-stage guided residential estimate and booking-profile workflow
-- virtual consultation / custom quote workflow
+- premium responsive Home experience with bespoke Tranquility brand mark and editorial visual system
+- complete Services catalog with residential service comparison and add-ons
+- dedicated Residential Cleaning service page
+- dedicated Commercial Cleaning service page
+- four-stage guided residential estimate and service-request workflow
+- virtual consultation / custom quote workflow with image validation and local previews
+- Dallas-Fort Worth service-area experience
 - About / Why Tranquility
-- FAQ
+- expanded FAQ
 - Careers / contractor inquiries
-- Contact and DFW service-area experience
-- persistent mobile Book / Get Quote actions
-- route-level title/description metadata and scroll restoration
-- accessible navigation, focus states, reduced-motion handling, and route error boundaries
+- Contact workflow with direct email preparation
+- Privacy and Terms pages
+- responsive desktop/mobile navigation and contextual mobile action bar
+- route-level SEO metadata, canonical URLs, Open Graph metadata, Twitter metadata, sitemap, robots policy, manifest, favicon, and structured service data
+- SPA route focus restoration, skip navigation, reduced-motion support, keyboard focus states, and route error boundaries
+- static-host SPA fallback and baseline security headers
 
-Production data submission, authentication, Supabase persistence, private photo storage, Stripe, scheduling persistence, and admin tooling are intentionally deferred from this customer-interface milestone.
+## Application boundaries
+
+The frontend intentionally does **not** claim that the following actions have occurred until the supporting infrastructure is connected:
+
+- persisted customer/booking records
+- persisted quote submissions
+- private property-photo uploads
+- payment-method authorization
+- card charges
+- confirmed appointment scheduling
+
+A dedicated Tranquility Supabase project has not been provisioned. The only Supabase project currently visible through the connected account is unrelated and must not be used for this application.
 
 ## Local development
+
+Node 22 is required.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Quality checks:
+Quality commands:
 
 ```bash
+npm run typecheck
 npm run lint
 npm test
 npm run build
+npm run check
 ```
 
 ## Development workflow
 
-The working model is intentionally simple:
-
 ```text
 main
   ↓
-commit implementation
+implement
   ↓
-verify
+quality gate
   ↓
-continue building
+visual QA
+  ↓
+release
 ```
 
-Existing historical branches may remain visible in GitHub, but they are not part of the active workflow. Future engineering changes should be committed directly to `main` unless the owner explicitly asks for isolation through a branch.
-
-## Verification policy
-
-GitHub accepting a commit is not the same as a successful production build. The repository's current GitHub Actions runner creates the `quality` job but has been failing before normal workflow steps are exposed. Until that runner issue is resolved, code-level verification must be reported separately from commit success.
+GitHub accepting a commit is not the same as a successful production build. A release is not considered verified until lint, tests, TypeScript compilation, and the Vite production build complete successfully in an executable Node 22 environment.
 
 ## Repository visibility
 
-No secrets, production credentials, customer data, Supabase keys, or Stripe keys may be committed. Repository visibility must be rechecked before infrastructure credentials are introduced because current connector metadata reports the repository as public.
+The repository is currently public. Do not commit private keys, customer data, production credentials, Supabase service-role keys, Stripe secret keys, webhook secrets, private property media, or environment files.
 
-See `docs/architecture.md`, `docs/business-rules.md`, `docs/backend-contracts.md`, and `SECURITY.md` before introducing infrastructure changes.
+See `docs/architecture.md`, `docs/business-rules.md`, `docs/backend-contracts.md`, `docs/verification.md`, and `SECURITY.md` before introducing infrastructure changes.

@@ -8,6 +8,7 @@ export function MobileActionBar() {
   const location = useLocation()
   const onBooking = location.pathname === '/booking'
   const onQuote = location.pathname === '/quote'
+  const reservationLabel = siteConfig.onlineBookingEnabled ? 'Book now' : 'Start request'
 
   return (
     <div
@@ -18,7 +19,7 @@ export function MobileActionBar() {
         {onQuote ? (
           <Link className={`${baseClass} border border-black/8 bg-tranquility-ivory text-tranquility-charcoal`} to="/booking">
             <Sparkles className="size-4" aria-hidden="true" />
-            Build estimate
+            {reservationLabel}
           </Link>
         ) : (
           <Link className={`${baseClass} border border-black/8 bg-tranquility-ivory text-tranquility-charcoal`} to="/quote">
@@ -35,7 +36,7 @@ export function MobileActionBar() {
         ) : (
           <Link className={`${baseClass} bg-tranquility-charcoal text-white`} to="/booking">
             <Sparkles className="size-4" aria-hidden="true" />
-            Book now
+            {reservationLabel}
           </Link>
         )}
       </div>

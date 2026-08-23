@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { pricingConfig } from '@/config/pricing'
 import { calculateBookingEstimate } from '@/lib/pricing'
-import type { Frequency, ServiceType } from '@/types/booking'
+import type { BookingEstimate, Frequency, ServiceType } from '@/types/booking'
 
 const numberOptions = [0, 1, 2, 3, 4, 5, 6]
 
@@ -10,6 +10,10 @@ type RoomCountFieldProps = {
   value: number
   onChange: (value: number) => void
 }
+
+type EstimateState =
+  | { estimate: BookingEstimate; error: null }
+  | { estimate: null; error: string }
 
 function RoomCountField({ label, value, onChange }: RoomCountFieldProps) {
   return (
@@ -40,45 +44,55 @@ export function BookingEstimator() {
   const [petDetails, setPetDetails] = useState('')
   const [addOnIds, setAddOnIds] = useState<string[]>([])
 
-  const estimate = useMemo(
-    () =>
-      calculateBookingEstimate({
-        serviceType,
-        frequency,
-        squareFootage,
-        bedrooms,
-        fullBathrooms,
-        halfBathrooms,
-        livingRooms,
-        diningRooms,
-        kitchens,
-        laundryRooms,
-        otherRooms,
-        petsPresent,
-        addOnIds,
-      }),
-    [
-      serviceType,
-      frequency,
-      squareFootage,
-      bedrooms,
-      fullBathrooms,
-      halfBathrooms,
-      livingRooms,
-      diningRooms,
-      kitchens,
-      laundryRooms,
-      otherRooms,
-      petsPresent,
-      addOnIds,
-    ],
-  )
+  const estimateState = useMemo<EstimateState>(() => {
+    try {
+      return {
+        estimate: calculateBookingEstimate({
+          serviceType,
+          frequency,
+          squareFootage,
+          bedrooms,
+          fullBathrooms,
+          halfBathrooms,
+          livingRooms,
+          diningRooms,
+          kitchens,
+          laundryRooms,
+          otherRooms,
+          petsPresent,
+          addOnIds,
+        }),
+        error: null,
+      }
+    } catch (error) {
+      return {
+        estimate: null,
+        error: error instanceof Error ? error.message : 'Enter valid property details to calculate an estimate.',
+      }
+    }
+  }, [
+    serviceType,
+    frequency,
+    squareFootage,
+    bedrooms,
+    fullBathrooms,
+    halfBathrooms,
+    livingRooms,
+    diningRooms,
+    kitchens,
+    laundryRooms,
+    otherRooms,
+    petsPresent,
+    addOnIds,
+  ])
 
   function toggleAddOn(id: string) {
     setAddOnIds((current) =>
       current.includes(id) ? current.filter((item) => item !== id) : [...current, id],
     )
   }
+
+  const estimate = estimateState.estimate
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
@@ -104,6 +118,7 @@ export function BookingEstimator() {
           <label className="grid gap-2 text-sm font-semibold sm:col-span-2">
             Approx. square footage
             <input
+              aria-describedby="square-footage-help"
               className="field"
               min={pricingConfig.minimumSquareFeet}
               onChange={(event) => setSquareFootage(Number(event.target.value))}
@@ -111,6 +126,9 @@ export function BookingEstimator() {
               type="number"
               value={squareFootage}
             />
+            <span className="text-xs font-normal text-black/50" id="square-footage-help">
+              Minimum {pricingConfig.minimumSquareFeet.toLocaleString()} sq ft for the instant estimator. Larger homes automatically move to custom quote review.
+            </span>
           </label>
           <RoomCountField label="Bedrooms" onChange={setBedrooms} value={bedrooms} />
           <RoomCountField label="Full bathrooms" onChange={setFullBathrooms} value={fullBathrooms} />
@@ -159,16 +177,21 @@ export function BookingEstimator() {
         </fieldset>
       </form>
 
-      <aside className="h-fit rounded-4xl bg-tranquility-charcoal p-7 text-white shadow-soft lg:sticky lg:top-28">
+      <aside aria-live="polite" className="h-fit rounded-4xl bg-tranquility-charcoal p-7 text-white shadow-soft lg:sticky lg:top-28">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">Estimated cleaning total</p>
-        {estimate.requiresManualQuote ? (
+        {estimateState.error ? (
+          <>
+            <p className="mt-4 font-serif text-3xl">Complete the property details</p>
+            <p className="mt-4 text-sm leading-6 text-white/70">{estimateState.error}</p>
+          </>
+        ) : estimate?.requiresManualQuote ? (
           <>
             <p className="mt-4 font-serif text-4xl">Custom quote</p>
             <p className="mt-4 text-sm leading-6 text-white/70">
               Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to virtual consultation so pricing can be reviewed accurately.
             </p>
           </>
-        ) : (
+        ) : estimate ? (
           <>
             <p className="mt-4 font-serif text-5xl">${estimate.total}</p>
             <dl className="mt-5 grid gap-2 text-sm text-white/70">
@@ -177,7 +200,7 @@ export function BookingEstimator() {
               {estimate.addOnTotal > 0 ? <div className="flex justify-between gap-4"><dt>Add-ons</dt><dd>+${estimate.addOnTotal}</dd></div> : null}
             </dl>
           </>
-        )}
+        ) : null}
         <p className="mt-6 border-t border-white/15 pt-5 text-xs leading-5 text-white/55">
           Planning estimate only. Final production pricing will be controlled through Tranquility&apos;s admin-managed pricing rules and may change when property condition or service scope materially differs from the submitted details.
         </p>

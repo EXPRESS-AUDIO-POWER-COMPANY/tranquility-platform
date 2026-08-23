@@ -2,43 +2,45 @@
 
 ## Current state
 
-The application foundation remains unmerged. The premium customer experience is implemented on `feature/premium-webapp-experience` and targets `development` through draft PR #2.
+The active development surface is `main`. The premium customer WebApp, booking estimator, virtual quote experience, service-area coverage, legal pages, SEO metadata, responsive navigation, and contact workflow are committed directly to `main`.
 
 ## Verified repository facts
 
-- GitHub write access is working and commits are being accepted.
-- `main` remains untouched by the premium feature work.
-- `development` remains the integration branch.
-- The premium feature branch is isolated from release.
+- GitHub write access is working and direct commits to `main` are being accepted.
 - React + TypeScript + Vite + Tailwind foundation is present.
-- Public routes include Home, Services, Booking, Quote, About, FAQ, Careers, Contact, 404, and route-level error handling.
+- Public routes include Home, Services, Service Area, Booking, Quote, About, FAQ, Careers, Contact, Privacy, Terms, 404, and route-level error handling.
 - Residential pricing logic remains isolated from UI and is covered by repository unit tests.
-- The customer booking experience now uses a four-stage guided flow for service, rooms, extras, and schedule/contact details.
-- The virtual quote flow validates selected image types, size, and count without pretending persistence is active.
-- Route metadata and scroll restoration are implemented without additional runtime dependencies.
-- Supabase persistence, Stripe, authentication, private uploads, and production booking writes remain intentionally disabled.
-- Current GitHub repository metadata reports the repository as public; therefore no secrets or customer data may be committed.
+- The residential booking experience uses a four-stage guided flow with input validation, property-condition context, room details, other-space details, pets, add-ons, service notes, address, scheduling, access notes, and a review state.
+- The virtual quote flow validates image type, per-file size, aggregate size, duplicate selections, and file count; supported images can be previewed and individually removed.
+- The quote and booking interfaces do not claim that persistence, payment, or uploads have occurred when those systems are not connected.
+- General customer inquiries can prepare a prefilled email without introducing an unverified backend form endpoint.
+- Route metadata includes per-route titles, descriptions, canonical URLs, Open Graph metadata, and Twitter metadata.
+- Static-hosting compatibility includes a SPA fallback, robots policy, sitemap, manifest, and favicon.
+- Supabase persistence, Stripe, authentication, private upload storage, and production booking writes remain intentionally disabled.
+- Current GitHub repository metadata reports the repository as public; no secrets, customer data, Supabase private keys, or Stripe keys may be committed.
 
 ## GitHub Actions status
 
-The workflow definition is recognized as `.github/workflows/ci.yml`, and GitHub consistently creates the `quality` job for pull-request commits. Current runs fail before any normal workflow step is exposed. The jobs API returns the failed `quality` job with an empty step list.
+CI is configured for direct `main` pushes, pull requests targeting `main`, and manual dispatch. The workflow requests dependency installation, lint, tests, and production build.
 
-There is therefore still no evidence that dependency installation, lint, tests, or the Vite build executed in those failed hosted runs. Treat the blocker as CI runner/execution infrastructure until executable logs prove otherwise.
+Earlier pull-request-triggered runs created a `quality` job but failed before normal workflow steps were exposed. The jobs API returned an empty step list, so those failures did not establish a TypeScript, lint, test, or Vite build error.
 
-## Required verification before merge
+Direct-main commits have not yet produced an executable verification record through the available connector. Treat executable CI/local verification as unresolved until a Node 22 environment with package-registry access successfully runs the quality commands.
 
-1. Obtain an executable Node 22 environment with package-registry access.
-2. Resolve dependencies and generate `package-lock.json`.
+## Required executable verification
+
+1. Obtain a Node 22 environment with package-registry access.
+2. Run `npm install --no-audit --no-fund` and generate `package-lock.json`.
 3. Run `npm run lint`.
 4. Run `npm test`.
 5. Run `npm run build`.
 6. Commit the verified lockfile.
-7. Change CI dependency installation from `npm install` to `npm ci`.
-8. Re-run CI and require a green `quality` job before promoting either draft PR.
-9. Reconfirm intended repository visibility before any infrastructure credential setup.
+7. Switch CI dependency installation from `npm install` to `npm ci`.
+8. Re-run the quality gate and require a successful result before calling the application production-ready.
+9. Reconfirm repository visibility before any infrastructure credentials are introduced.
 
 ## Release status
 
 `IMPLEMENTED — VERIFICATION REQUIRED`
 
-Do not merge to `main`, publish a production domain, or label the frontend production-ready until the executable quality gate succeeds.
+The customer-facing WebApp implementation is materially advanced, but executable lint/test/build verification is still required before production release.

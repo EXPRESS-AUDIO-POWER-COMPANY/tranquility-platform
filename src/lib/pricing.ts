@@ -12,9 +12,25 @@ const countFields = [
   'otherRooms',
 ] as const satisfies readonly (keyof BookingEstimateInput)[]
 
+function hasOwn(object: object, key: PropertyKey) {
+  return Object.prototype.hasOwnProperty.call(object, key)
+}
+
 function assertValidInput(input: BookingEstimateInput) {
   if (!Number.isFinite(input.squareFootage) || input.squareFootage < pricingConfig.minimumSquareFeet) {
     throw new RangeError(`Square footage must be at least ${pricingConfig.minimumSquareFeet}.`)
+  }
+
+  if (!hasOwn(pricingConfig.serviceMultipliers, input.serviceType)) {
+    throw new Error(`Unknown service type: ${String(input.serviceType)}`)
+  }
+
+  if (!hasOwn(pricingConfig.frequencyDiscounts, input.frequency)) {
+    throw new Error(`Unknown frequency: ${String(input.frequency)}`)
+  }
+
+  if (typeof input.petsPresent !== 'boolean') {
+    throw new TypeError('petsPresent must be a boolean.')
   }
 
   for (const field of countFields) {
@@ -24,10 +40,14 @@ function assertValidInput(input: BookingEstimateInput) {
     }
   }
 
+  if (!Array.isArray(input.addOnIds)) {
+    throw new TypeError('addOnIds must be an array.')
+  }
+
   const knownAddOns = new Set(pricingConfig.addOns.map(({ id }) => id))
-  const unknownAddOn = input.addOnIds.find((id) => !knownAddOns.has(id))
-  if (unknownAddOn) {
-    throw new Error(`Unknown add-on: ${unknownAddOn}`)
+  const unknownAddOn = input.addOnIds.find((id) => typeof id !== 'string' || !knownAddOns.has(id))
+  if (unknownAddOn !== undefined) {
+    throw new Error(`Unknown add-on: ${String(unknownAddOn)}`)
   }
 }
 
@@ -67,9 +87,6 @@ export function calculateBookingEstimate(input: BookingEstimateInput): BookingEs
     .filter(({ id }) => uniqueAddOnIds.has(id))
     .reduce((sum, addOn) => sum + addOn.price, 0)
 
-  // Service multipliers and recurring discounts apply only to the core cleaning
-  // service. Fixed-price add-ons remain fixed so a deep-clean multiplier or
-  // recurring discount cannot silently distort their published price.
   const serviceSubtotal = Math.round(
     (base + roomAdjustments) * pricingConfig.serviceMultipliers[input.serviceType],
   )

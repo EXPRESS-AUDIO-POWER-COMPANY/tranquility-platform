@@ -44,7 +44,7 @@ function assertValidInput(input: BookingEstimateInput) {
     throw new TypeError('addOnIds must be an array.')
   }
 
-  const knownAddOns = new Set(pricingConfig.addOns.map(({ id }) => id))
+  const knownAddOns = new Set<string>(pricingConfig.addOns.map(({ id }) => id))
   const invalidAddOnIndex = input.addOnIds.findIndex((id) => typeof id !== 'string' || !knownAddOns.has(id))
   if (invalidAddOnIndex >= 0) {
     throw new Error(`Unknown add-on: ${String(input.addOnIds[invalidAddOnIndex])}`)

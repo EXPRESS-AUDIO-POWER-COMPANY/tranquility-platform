@@ -2,42 +2,40 @@
 
 ## Current state
 
-The application foundation is implemented on `development` and remains unmerged in draft PR #1.
+The application foundation remains unmerged. The premium customer experience is implemented on `feature/premium-webapp-experience` and targets `development` through draft PR #2.
 
-## Completed repository checks
+## Verified repository facts
 
-- Repository identity and write permissions verified.
-- `main` retained as the release branch.
-- `development` is the active integration branch and is ahead of `main` with no intentional production merge yet.
-- The repository started without an application codebase, so no existing production application architecture was overwritten.
+- GitHub write access is working and commits are being accepted.
+- `main` remains untouched by the premium feature work.
+- `development` remains the integration branch.
+- The premium feature branch is ahead of `development` and isolated from release.
 - React + TypeScript + Vite + Tailwind foundation is present.
-- Public routes include Home, About, FAQ, Careers, Booking, Quote, 404, and route-level error handling.
-- Residential pricing logic is isolated from UI and covered by unit tests in the repository.
-- Pricing input validation rejects malformed dimensions and unknown add-ons.
-- Fixed-price add-ons are not multiplied by service-level modifiers or recurring discounts.
-- Booking estimator handles invalid in-progress form input without crashing the route.
-- No Supabase production project, Stripe secret, service-role credential, persistent quote upload, or production booking write has been enabled for Tranquility.
-- `.env.example` contains browser-safe placeholders only; privileged credentials are explicitly excluded.
+- Public routes include Home, Services, Booking, Quote, About, FAQ, Careers, Contact, 404, and route-level error handling.
+- Residential pricing logic remains isolated from UI and is covered by repository unit tests.
+- The customer booking experience now uses a four-stage guided flow for service, rooms, extras, and schedule/contact details.
+- Route metadata and scroll restoration are implemented without additional runtime dependencies.
+- Supabase persistence, Stripe, authentication, private uploads, and production booking writes remain intentionally disabled.
 
 ## GitHub Actions status
 
-The workflow definition is now recognized as `.github/workflows/ci.yml` and GitHub creates the `quality` job. The most recent observed run for the foundation branch failed before any normal workflow step was exposed. The jobs API returned a failed `quality` job with an empty step list, and the job log endpoint returned `BlobNotFound`.
+The workflow definition is recognized as `.github/workflows/ci.yml`, and GitHub consistently creates the `quality` job for pull-request commits. Current runs fail before any normal workflow step is exposed. The jobs API returns the failed `quality` job with an empty step list.
 
-This is materially different from a TypeScript, lint, test, or Vite build failure: there is currently no evidence that those commands executed in that failed run. Treat the blocker as CI execution/runner infrastructure until an executable log proves otherwise.
+There is therefore still no evidence that dependency installation, lint, tests, or the Vite build executed in those failed hosted runs. Treat the blocker as CI runner/execution infrastructure until executable logs prove otherwise.
 
 ## Required verification before merge
 
-1. Obtain an executable Node 22 environment with package-registry access (GitHub Actions or local/remote development environment).
+1. Obtain an executable Node 22 environment with package-registry access.
 2. Resolve dependencies and generate `package-lock.json`.
 3. Run `npm run lint`.
 4. Run `npm test`.
 5. Run `npm run build`.
 6. Commit the verified lockfile.
 7. Change CI dependency installation from `npm install` to `npm ci`.
-8. Re-run CI and require a green `quality` job before moving PR #1 out of draft.
+8. Re-run CI and require a green `quality` job before promoting either draft PR.
 
 ## Release status
 
 `IMPLEMENTED — VERIFICATION REQUIRED`
 
-Do not merge to `main`, publish a production domain, or label the foundation production-ready until the executable quality gate succeeds.
+Do not merge to `main`, publish a production domain, or label the frontend production-ready until the executable quality gate succeeds.

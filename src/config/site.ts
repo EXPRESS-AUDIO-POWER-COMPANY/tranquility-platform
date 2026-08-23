@@ -1,10 +1,12 @@
+const configuredSiteUrl = import.meta.env.VITE_SITE_URL?.trim()
+
 export const siteConfig = {
   name: 'Tranquility Cleaning',
   shortName: 'Tranquility',
   tagline: 'Come home to tranquility.',
   description:
     'Professional residential and commercial cleaning across Dallas-Fort Worth with simple booking, clear service options, and thoughtful care for every space.',
-  siteUrl: 'https://tranquility.cleaning',
+  siteUrl: configuredSiteUrl || 'https://tranquility.cleaning',
   phone: '(945) 402-3260',
   phoneHref: 'tel:+19454023260',
   email: 'tlcllc26@gmail.com',

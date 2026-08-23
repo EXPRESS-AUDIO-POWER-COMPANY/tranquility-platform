@@ -9,30 +9,122 @@
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   --page-gutter: clamp(1.25rem, 3vw, 2rem);
 }
 
-html { scroll-behavior: smooth; background: #f7f3ea; }
-body { margin: 0; min-width: 320px; min-height: 100vh; overflow-x: hidden; background: #f7f3ea; }
-button, input, textarea, select { font: inherit; }
-button, a, summary { -webkit-tap-highlight-color: transparent; }
-img { max-width: 100%; display: block; }
-::selection { background: #cbd3c8; color: #232825; }
-.font-serif { font-family: "Iowan Old Style", "Palatino Linotype", Baskerville, Georgia, "Times New Roman", serif; }
-.eyebrow { @apply text-xs font-bold uppercase tracking-[0.2em] text-tranquility-moss; }
-.field { @apply min-h-12 w-full rounded-2xl border border-black/10 bg-tranquility-ivory px-4 py-3 text-sm text-tranquility-charcoal outline-none transition placeholder:text-black/35 hover:border-black/20 focus:border-tranquility-moss focus:bg-white focus:ring-2 focus:ring-tranquility-moss/20; }
-
-:where(a, button, summary):focus-visible {
-  outline: 2px solid #5F6D5C;
-  outline-offset: 3px;
-  border-radius: 0.5rem;
+html {
+  scroll-behavior: smooth;
+  background: #f7f3ea;
+  text-size-adjust: 100%;
 }
 
-input[type='checkbox'] { accent-color: #5F6D5C; }
-input[type='date']::-webkit-calendar-picker-indicator { opacity: 0.65; }
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #f7f3ea;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+summary,
+select {
+  cursor: pointer;
+}
+
+button:disabled,
+select:disabled,
+input:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+img {
+  display: block;
+}
+
+::selection {
+  background: #cbd3c8;
+  color: #232825;
+}
+
+.font-serif {
+  font-family: "Iowan Old Style", "Palatino Linotype", Baskerville, Charter, Georgia, "Times New Roman", serif;
+  font-kerning: normal;
+}
+
+.eyebrow {
+  @apply text-[10px] font-bold uppercase tracking-[0.22em] text-tranquility-moss sm:text-xs;
+}
+
+.field {
+  @apply min-h-12 w-full rounded-2xl border border-black/10 bg-tranquility-ivory px-4 py-3 text-sm text-tranquility-charcoal outline-none transition duration-200 placeholder:text-black/35 hover:border-black/20 focus:border-tranquility-moss focus:bg-white focus:ring-2 focus:ring-tranquility-moss/20 disabled:bg-black/5 disabled:text-black/45;
+}
+
+textarea.field {
+  resize: vertical;
+}
+
+.field[aria-invalid='true'] {
+  @apply border-red-700/45 ring-1 ring-red-700/10;
+}
+
+:where(a, button, summary, input, textarea, select):focus-visible {
+  outline: 2px solid #5f6d5c;
+  outline-offset: 3px;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: #5f6d5c;
+}
+
+input[type='date']::-webkit-calendar-picker-indicator {
+  opacity: 0.65;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-text-fill-color: #232825;
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  transition: background-color 9999s ease-out 0s;
+}
+
+@supports (text-wrap: balance) {
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;

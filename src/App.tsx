@@ -7,9 +7,12 @@ import { Contact } from '@/pages/Contact'
 import { Faq } from '@/pages/Faq'
 import { Home } from '@/pages/Home'
 import { NotFound } from '@/pages/NotFound'
+import { Privacy } from '@/pages/Privacy'
 import { Quote } from '@/pages/Quote'
 import { RouteError } from '@/pages/RouteError'
+import { ServiceArea } from '@/pages/ServiceArea'
 import { Services } from '@/pages/Services'
+import { Terms } from '@/pages/Terms'
 
 const router = createBrowserRouter([
   {
@@ -18,12 +21,15 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home /> },
       { path: '/services', element: <Services /> },
+      { path: '/service-area', element: <ServiceArea /> },
       { path: '/booking', element: <Booking /> },
       { path: '/quote', element: <Quote /> },
       { path: '/about', element: <About /> },
       { path: '/faq', element: <Faq /> },
       { path: '/careers', element: <Careers /> },
       { path: '/contact', element: <Contact /> },
+      { path: '/privacy', element: <Privacy /> },
+      { path: '/terms', element: <Terms /> },
       { path: '*', element: <NotFound /> },
     ],
   },

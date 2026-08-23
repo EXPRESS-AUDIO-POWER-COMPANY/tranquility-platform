@@ -26,6 +26,8 @@ export function Footer() {
           <div className="mt-5 grid gap-3 text-sm font-semibold text-white/72">
             <Link className="transition hover:text-white" to="/services">Services</Link>
             <Link className="transition hover:text-white" to="/residential-cleaning">Residential cleaning</Link>
+            <Link className="transition hover:text-white" to="/deep-cleaning">Deep cleaning</Link>
+            <Link className="transition hover:text-white" to="/move-in-move-out-cleaning">Move-In / Move-Out</Link>
             <Link className="transition hover:text-white" to="/commercial-cleaning">Commercial cleaning</Link>
             <Link className="transition hover:text-white" to="/service-area">Service area</Link>
             <Link className="transition hover:text-white" to="/booking">Build an estimate</Link>
@@ -54,7 +56,7 @@ export function Footer() {
             </Link>
           </div>
           <div className="mt-6 border-t border-white/10 pt-5">
-            <p className="text-xs leading-6 text-white/45">Residential estimates, custom property reviews, commercial inquiries, and direct service support.</p>
+            <p className="text-xs leading-6 text-white/45">Residential estimates, detailed resets, move cleaning, commercial quotes, and direct service support.</p>
           </div>
         </div>
       </div>

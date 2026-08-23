@@ -8,6 +8,7 @@ import { Home } from '@/pages/Home'
 import { NotFound } from '@/pages/NotFound'
 import { Quote } from '@/pages/Quote'
 import { RouteError } from '@/pages/RouteError'
+import { Services } from '@/pages/Services'
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,7 @@ const router = createBrowserRouter([
     errorElement: <RouteError />,
     children: [
       { path: '/', element: <Home /> },
+      { path: '/services', element: <Services /> },
       { path: '/booking', element: <Booking /> },
       { path: '/quote', element: <Quote /> },
       { path: '/about', element: <About /> },

@@ -1,4 +1,6 @@
+import { ArrowRight } from 'lucide-react'
 import { useMemo, useState } from 'react'
+import { ButtonLink } from '@/components/ui/Button'
 import { pricingConfig } from '@/config/pricing'
 import { calculateBookingEstimate } from '@/lib/pricing'
 import type { BookingEstimate, Frequency, ServiceType } from '@/types/booking'
@@ -96,7 +98,12 @@ export function BookingEstimator() {
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr]">
-      <form className="rounded-4xl bg-white p-6 shadow-soft sm:p-8" onSubmit={(event) => event.preventDefault()}>
+      <form className="rounded-[2.2rem] bg-white p-6 shadow-soft sm:p-8" onSubmit={(event) => event.preventDefault()}>
+        <div className="mb-7 border-b border-black/7 pb-6">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-tranquility-moss">Step 1 • Service profile</p>
+          <p className="mt-2 text-sm leading-6 text-black/55">Start with the basic cleaning type and how often you want service.</p>
+        </div>
+
         <div className="grid gap-6 sm:grid-cols-2">
           <label className="grid gap-2 text-sm font-semibold">
             Service type
@@ -127,9 +134,17 @@ export function BookingEstimator() {
               value={squareFootage}
             />
             <span className="text-xs font-normal text-black/50" id="square-footage-help">
-              Minimum {pricingConfig.minimumSquareFeet.toLocaleString()} sq ft for the instant estimator. Larger homes automatically move to custom quote review.
+              Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to a custom quote for a closer review.
             </span>
           </label>
+        </div>
+
+        <div className="my-8 border-t border-black/7 pt-7">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-tranquility-moss">Step 2 • Rooms and spaces</p>
+          <p className="mt-2 text-sm leading-6 text-black/55">Select the spaces that should be considered in the cleaning estimate.</p>
+        </div>
+
+        <div className="grid gap-6 sm:grid-cols-2">
           <RoomCountField label="Bedrooms" onChange={setBedrooms} value={bedrooms} />
           <RoomCountField label="Full bathrooms" onChange={setFullBathrooms} value={fullBathrooms} />
           <RoomCountField label="Half bathrooms" onChange={setHalfBathrooms} value={halfBathrooms} />
@@ -140,7 +155,12 @@ export function BookingEstimator() {
           <RoomCountField label="Other rooms / spaces" onChange={setOtherRooms} value={otherRooms} />
         </div>
 
-        <div className="mt-6 rounded-2xl border border-black/10 p-4">
+        <div className="my-8 border-t border-black/7 pt-7">
+          <p className="text-xs font-bold uppercase tracking-[0.16em] text-tranquility-moss">Step 3 • Pets and extras</p>
+          <p className="mt-2 text-sm leading-6 text-black/55">Share anything that can affect time, access, or cleaning detail.</p>
+        </div>
+
+        <div className="rounded-2xl border border-black/10 p-4">
           <label className="flex items-center gap-3 text-sm font-medium">
             <input checked={petsPresent} onChange={(event) => setPetsPresent(event.target.checked)} type="checkbox" />
             Pets will be present during service
@@ -156,16 +176,14 @@ export function BookingEstimator() {
               />
             </label>
           ) : null}
-          <p className="mt-3 text-xs leading-5 text-black/55">
-            Pets may remain in the home when they do not interfere with safe service completion. Please secure any animal that may become aggressive, highly anxious, or disruptive.
-          </p>
+          <p className="mt-3 text-xs leading-5 text-black/55">Pets may remain in the home when they do not interfere with safe service completion. Please secure any animal that may become aggressive, highly anxious, or disruptive.</p>
         </div>
 
         <fieldset className="mt-8">
           <legend className="text-sm font-bold">Optional add-ons</legend>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {pricingConfig.addOns.map((addOn) => (
-              <label key={addOn.id} className="flex items-start gap-3 rounded-2xl border border-black/10 p-4">
+              <label key={addOn.id} className="flex items-start gap-3 rounded-2xl border border-black/10 p-4 transition hover:bg-tranquility-ivory/70">
                 <input checked={addOnIds.includes(addOn.id)} onChange={() => toggleAddOn(addOn.id)} type="checkbox" />
                 <span className="text-sm">
                   <span className="block font-semibold">{addOn.name}</span>
@@ -177,33 +195,32 @@ export function BookingEstimator() {
         </fieldset>
       </form>
 
-      <aside aria-live="polite" className="h-fit rounded-4xl bg-tranquility-charcoal p-7 text-white shadow-soft lg:sticky lg:top-28">
-        <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">Estimated cleaning total</p>
+      <aside aria-live="polite" className="h-fit rounded-[2.2rem] bg-tranquility-charcoal p-7 text-white shadow-soft lg:sticky lg:top-32 sm:p-8">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/50">Your cleaning estimate</p>
         {estimateState.error ? (
           <>
-            <p className="mt-4 font-serif text-3xl">Complete the property details</p>
+            <p className="mt-5 font-serif text-3xl">Complete the property details</p>
             <p className="mt-4 text-sm leading-6 text-white/70">{estimateState.error}</p>
           </>
         ) : estimate?.requiresManualQuote ? (
           <>
-            <p className="mt-4 font-serif text-4xl">Custom quote</p>
-            <p className="mt-4 text-sm leading-6 text-white/70">
-              Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to virtual consultation so pricing can be reviewed accurately.
-            </p>
+            <p className="mt-5 font-serif text-4xl">Custom quote</p>
+            <p className="mt-4 text-sm leading-6 text-white/70">This property falls outside the instant-estimate range. A virtual consultation gives Tranquility room to review the space accurately.</p>
+            <ButtonLink className="mt-7 w-full bg-white text-tranquility-charcoal hover:bg-tranquility-ivory" to="/quote">Start custom quote <ArrowRight className="ml-2 size-4" /></ButtonLink>
           </>
         ) : estimate ? (
           <>
-            <p className="mt-4 font-serif text-5xl">${estimate.total}</p>
-            <dl className="mt-5 grid gap-2 text-sm text-white/70">
+            <p className="mt-5 font-serif text-5xl">${estimate.total}</p>
+            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/42">Current base estimate</p>
+            <dl className="mt-6 grid gap-3 border-t border-white/10 pt-5 text-sm text-white/70">
               <div className="flex justify-between gap-4"><dt>Cleaning service</dt><dd>${estimate.serviceSubtotal}</dd></div>
               {estimate.frequencyDiscount > 0 ? <div className="flex justify-between gap-4"><dt>Recurring discount</dt><dd>−${estimate.frequencyDiscount}</dd></div> : null}
               {estimate.addOnTotal > 0 ? <div className="flex justify-between gap-4"><dt>Add-ons</dt><dd>+${estimate.addOnTotal}</dd></div> : null}
             </dl>
+            <ButtonLink className="mt-7 w-full bg-white text-tranquility-charcoal hover:bg-tranquility-ivory" to="/quote" variant="secondary">Need a closer review?</ButtonLink>
           </>
         ) : null}
-        <p className="mt-6 border-t border-white/15 pt-5 text-xs leading-5 text-white/55">
-          Planning estimate only. Final production pricing will be controlled through Tranquility&apos;s admin-managed pricing rules and may change when property condition or service scope materially differs from the submitted details.
-        </p>
+        <p className="mt-6 border-t border-white/10 pt-5 text-xs leading-6 text-white/48">This is a planning estimate based on the details selected. Property condition, requested scope, and specialty items can change the final service price.</p>
       </aside>
     </div>
   )

@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, PropsWithChildren } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, type LinkProps } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 type Variant = 'primary' | 'secondary' | 'ghost'
@@ -9,7 +9,7 @@ const base =
 
 const variants: Record<Variant, string> = {
   primary: 'bg-tranquility-charcoal text-white hover:bg-tranquility-moss',
-  secondary: 'bg-white text-tranquility-charcoal shadow-soft hover:bg-tranquility-ivory',
+  secondary: 'border border-black/8 bg-white text-tranquility-charcoal shadow-soft hover:bg-tranquility-ivory',
   ghost: 'text-tranquility-charcoal hover:bg-white/70',
 }
 
@@ -21,14 +21,21 @@ export function Button({ className, variant = 'primary', ...props }: ButtonProps
   return <button className={cn(base, variants[variant], className)} {...props} />
 }
 
+type ButtonLinkProps = PropsWithChildren<
+  Omit<LinkProps, 'className'> & {
+    className?: string
+    variant?: Variant
+  }
+>
+
 export function ButtonLink({
-  to,
   children,
   className,
   variant = 'primary',
-}: PropsWithChildren<{ to: string; className?: string; variant?: Variant }>) {
+  ...props
+}: ButtonLinkProps) {
   return (
-    <Link className={cn(base, variants[variant], className)} to={to}>
+    <Link className={cn(base, variants[variant], className)} {...props}>
       {children}
     </Link>
   )

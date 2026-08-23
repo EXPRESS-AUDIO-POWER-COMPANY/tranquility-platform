@@ -1,5 +1,5 @@
 import { pricingConfig } from '@/config/pricing'
-import type { BookingEstimate, BookingEstimateInput } from '@/types/booking'
+import type { BookingEstimate, BookingEstimateInput, PricingRules } from '@/types/booking'
 
 const countFields = [
   'bedrooms',
@@ -16,16 +16,16 @@ function hasOwn(object: object, key: PropertyKey) {
   return Object.prototype.hasOwnProperty.call(object, key)
 }
 
-function assertValidInput(input: BookingEstimateInput) {
-  if (!Number.isFinite(input.squareFootage) || input.squareFootage < pricingConfig.minimumSquareFeet) {
-    throw new RangeError(`Square footage must be at least ${pricingConfig.minimumSquareFeet}.`)
+function assertValidInput(input: BookingEstimateInput, rules: PricingRules) {
+  if (!Number.isFinite(input.squareFootage) || input.squareFootage < rules.minimumSquareFeet) {
+    throw new RangeError(`Square footage must be at least ${rules.minimumSquareFeet}.`)
   }
 
-  if (!hasOwn(pricingConfig.serviceMultipliers, input.serviceType)) {
+  if (!hasOwn(rules.serviceMultipliers, input.serviceType)) {
     throw new Error(`Unknown service type: ${String(input.serviceType)}`)
   }
 
-  if (!hasOwn(pricingConfig.frequencyDiscounts, input.frequency)) {
+  if (!hasOwn(rules.frequencyDiscounts, input.frequency)) {
     throw new Error(`Unknown frequency: ${String(input.frequency)}`)
   }
 
@@ -44,22 +44,27 @@ function assertValidInput(input: BookingEstimateInput) {
     throw new TypeError('addOnIds must be an array.')
   }
 
-  const knownAddOns = new Set<string>(pricingConfig.addOns.map(({ id }) => id))
-  const invalidAddOnIndex = input.addOnIds.findIndex((id) => typeof id !== 'string' || !knownAddOns.has(id))
+  const knownAddOns = new Set<string>(rules.addOns.map(({ id }) => id))
+  const invalidAddOnIndex = input.addOnIds.findIndex(
+    (id) => typeof id !== 'string' || !knownAddOns.has(id),
+  )
   if (invalidAddOnIndex >= 0) {
     throw new Error(`Unknown add-on: ${String(input.addOnIds[invalidAddOnIndex])}`)
   }
 }
 
-function getBasePrice(squareFootage: number) {
-  const tier = pricingConfig.baseBySquareFootage.find(({ max }) => squareFootage <= max)
+function getBasePrice(squareFootage: number, rules: PricingRules) {
+  const tier = rules.baseBySquareFootage.find(({ max }) => squareFootage <= max)
   return tier?.price ?? 0
 }
 
-export function calculateBookingEstimate(input: BookingEstimateInput): BookingEstimate {
-  assertValidInput(input)
+export function calculateBookingEstimate(
+  input: BookingEstimateInput,
+  rules: PricingRules = pricingConfig,
+): BookingEstimate {
+  assertValidInput(input, rules)
 
-  if (input.squareFootage > pricingConfig.manualQuoteAboveSquareFeet) {
+  if (input.squareFootage > rules.manualQuoteAboveSquareFeet) {
     return {
       serviceSubtotal: 0,
       addOnTotal: 0,
@@ -70,28 +75,28 @@ export function calculateBookingEstimate(input: BookingEstimateInput): BookingEs
     }
   }
 
-  const base = getBasePrice(input.squareFootage)
+  const base = getBasePrice(input.squareFootage, rules)
   const roomAdjustments =
-    input.bedrooms * pricingConfig.roomIncrements.bedroom +
-    input.fullBathrooms * pricingConfig.roomIncrements.fullBathroom +
-    input.halfBathrooms * pricingConfig.roomIncrements.halfBathroom +
-    input.livingRooms * pricingConfig.roomIncrements.livingRoom +
-    input.diningRooms * pricingConfig.roomIncrements.diningRoom +
-    input.kitchens * pricingConfig.roomIncrements.kitchen +
-    input.laundryRooms * pricingConfig.roomIncrements.laundryRoom +
-    input.otherRooms * pricingConfig.roomIncrements.otherRoom +
-    (input.petsPresent ? pricingConfig.petPresenceIncrement : 0)
+    input.bedrooms * rules.roomIncrements.bedroom +
+    input.fullBathrooms * rules.roomIncrements.fullBathroom +
+    input.halfBathrooms * rules.roomIncrements.halfBathroom +
+    input.livingRooms * rules.roomIncrements.livingRoom +
+    input.diningRooms * rules.roomIncrements.diningRoom +
+    input.kitchens * rules.roomIncrements.kitchen +
+    input.laundryRooms * rules.roomIncrements.laundryRoom +
+    input.otherRooms * rules.roomIncrements.otherRoom +
+    (input.petsPresent ? rules.petPresenceIncrement : 0)
 
   const uniqueAddOnIds = new Set(input.addOnIds)
-  const addOnTotal = pricingConfig.addOns
+  const addOnTotal = rules.addOns
     .filter(({ id }) => uniqueAddOnIds.has(id))
     .reduce((sum, addOn) => sum + addOn.price, 0)
 
   const serviceSubtotal = Math.round(
-    (base + roomAdjustments) * pricingConfig.serviceMultipliers[input.serviceType],
+    (base + roomAdjustments) * rules.serviceMultipliers[input.serviceType],
   )
   const frequencyDiscount = Math.round(
-    serviceSubtotal * pricingConfig.frequencyDiscounts[input.frequency],
+    serviceSubtotal * rules.frequencyDiscounts[input.frequency],
   )
   const discountedService = Math.max(0, serviceSubtotal - frequencyDiscount)
   const subtotal = serviceSubtotal + addOnTotal

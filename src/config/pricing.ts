@@ -1,5 +1,16 @@
 import type { Frequency, PricingAddOn, ServiceType } from '@/types/booking'
 
+const addOns: PricingAddOn[] = [
+  { id: 'laundry', name: 'Laundry — one load', price: 25 },
+  { id: 'oven', name: 'Inside oven', price: 30 },
+  { id: 'refrigerator', name: 'Inside refrigerator', price: 30 },
+  { id: 'dishwasher', name: 'Dishwasher detail', price: 20 },
+  { id: 'spot-stain', name: 'Spot / stain treatment', price: 25, requiresReview: true },
+  { id: 'spot-carpet', name: 'Spot carpet cleaning', price: 30, requiresReview: true },
+  { id: 'hood-vents', name: 'Range hood / vent detail', price: 25 },
+  { id: 'excess-pet-hair', name: 'Excess pet hair', price: 20, requiresReview: true },
+]
+
 // Temporary version-controlled seed configuration. This will be moved into
 // Supabase-managed pricing tables before production booking is enabled.
 export const pricingConfig = {
@@ -26,14 +37,5 @@ export const pricingConfig = {
     biweekly: 0.1,
     monthly: 0.05,
   } satisfies Record<Frequency, number>,
-  addOns: [
-    { id: 'laundry', name: 'Laundry — one load', price: 25 },
-    { id: 'oven', name: 'Inside oven', price: 30 },
-    { id: 'refrigerator', name: 'Inside refrigerator', price: 30 },
-    { id: 'dishwasher', name: 'Dishwasher detail', price: 20 },
-    { id: 'spot-stain', name: 'Spot / stain treatment', price: 25, requiresReview: true },
-    { id: 'spot-carpet', name: 'Spot carpet cleaning', price: 30, requiresReview: true },
-    { id: 'hood-vents', name: 'Range hood / vent detail', price: 25 },
-    { id: 'excess-pet-hair', name: 'Excess pet hair', price: 20, requiresReview: true },
-  ] satisfies PricingAddOn[],
+  addOns,
 } as const

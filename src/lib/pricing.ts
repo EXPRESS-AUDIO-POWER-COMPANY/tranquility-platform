@@ -45,9 +45,9 @@ function assertValidInput(input: BookingEstimateInput) {
   }
 
   const knownAddOns = new Set(pricingConfig.addOns.map(({ id }) => id))
-  const unknownAddOn = input.addOnIds.find((id) => typeof id !== 'string' || !knownAddOns.has(id))
-  if (unknownAddOn !== undefined) {
-    throw new Error(`Unknown add-on: ${String(unknownAddOn)}`)
+  const invalidAddOnIndex = input.addOnIds.findIndex((id) => typeof id !== 'string' || !knownAddOns.has(id))
+  if (invalidAddOnIndex >= 0) {
+    throw new Error(`Unknown add-on: ${String(input.addOnIds[invalidAddOnIndex])}`)
   }
 }
 

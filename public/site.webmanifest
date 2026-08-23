@@ -1,9 +1,19 @@
 {
+  "id": "/",
   "name": "Tranquility Cleaning",
   "short_name": "Tranquility",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#F7F3EA",
   "theme_color": "#232825",
-  "description": "Professional residential and commercial cleaning across Dallas-Fort Worth."
+  "description": "Professional residential and commercial cleaning across Dallas-Fort Worth.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }

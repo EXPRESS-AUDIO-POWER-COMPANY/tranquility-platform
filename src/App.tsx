@@ -7,10 +7,12 @@ import { Faq } from '@/pages/Faq'
 import { Home } from '@/pages/Home'
 import { NotFound } from '@/pages/NotFound'
 import { Quote } from '@/pages/Quote'
+import { RouteError } from '@/pages/RouteError'
 
 const router = createBrowserRouter([
   {
     element: <SiteLayout />,
+    errorElement: <RouteError />,
     children: [
       { path: '/', element: <Home /> },
       { path: '/booking', element: <Booking /> },

@@ -6,6 +6,7 @@ import {
   Home as HomeIcon,
   Image as ImageIcon,
   Layers3,
+  MapPin,
   ShieldCheck,
   Sparkles,
 } from 'lucide-react'
@@ -26,7 +27,7 @@ const services = [
   {
     title: 'Move-In / Move-Out',
     eyebrow: 'Fresh transition',
-    description: 'A top-to-bottom turnover clean designed for homes between occupants or before a fresh start.',
+    description: 'A turnover clean for homes between occupants, moving days, and fresh starts.',
   },
   {
     title: 'Commercial Cleaning',
@@ -39,27 +40,33 @@ const steps = [
   {
     icon: ClipboardCheck,
     title: 'Tell us about the space',
-    body: 'Choose the service, square footage, room counts, pets, and the extras that matter for your cleaning.',
+    body: 'Choose the service, square footage, room counts, pets, and extras that matter for your cleaning.',
   },
   {
     icon: Layers3,
     title: 'See the right pricing path',
-    body: 'Residential jobs can receive a clear base estimate. Larger or more detailed spaces move to a custom quote.',
+    body: 'Residential jobs can receive a clear planning estimate. Larger or more detailed spaces move to a custom quote.',
   },
   {
     icon: Sparkles,
     title: 'Choose the next step',
-    body: 'Book the service path that fits or use the virtual consultation when photos and a closer review make more sense.',
+    body: 'Continue with the residential reservation profile or use the virtual consultation when a closer review makes more sense.',
   },
 ]
 
 const highlights = [
   'Square-footage based estimates',
-  'Room-by-room service details',
+  'Room-by-room property details',
   'One-time or recurring options',
   'Pet and access notes',
   'Optional cleaning add-ons',
-  'Virtual quote consultation',
+  'Virtual consultation option',
+]
+
+const trustPoints = [
+  ['DFW focused', 'Local service coverage across Dallas-Fort Worth and surrounding communities.'],
+  ['Clear choices', 'Understand the service, estimate, and custom-quote path before moving forward.'],
+  ['Property-specific', 'Room layout, pets, condition, access, and specialty requests can all be captured up front.'],
 ]
 
 export function Home() {
@@ -76,21 +83,19 @@ export function Home() {
               Professional cleaning • {siteConfig.serviceAreaShort}
             </div>
             <h1 className="mt-7 max-w-4xl font-serif text-5xl leading-[0.96] tracking-[-0.045em] sm:text-6xl lg:text-[5.4rem]">
-              A cleaner space should feel like <span className="text-tranquility-moss">peace</span> walking through the door.
+              Come home to <span className="text-tranquility-moss">tranquility.</span>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-black/62 sm:text-xl">
-              {siteConfig.description}
+              Professional cleaning with a calmer way to understand your options, build a residential estimate, or request a closer property review.
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <ButtonLink className="min-w-40" to="/booking">
                 Build my estimate <ArrowRight className="ml-2 size-4" aria-hidden="true" />
               </ButtonLink>
-              <ButtonLink className="min-w-40" to="/quote" variant="secondary">
-                Request a quote
-              </ButtonLink>
+              <ButtonLink className="min-w-40" to="/quote" variant="secondary">Request a quote</ButtonLink>
             </div>
             <div className="mt-10 grid max-w-2xl gap-3 sm:grid-cols-3">
-              {['Easy to understand', 'Built for mobile', 'Custom quote option'].map((item) => (
+              {['Residential estimates', 'Custom quote option', 'One-time or recurring'].map((item) => (
                 <span key={item} className="flex items-center gap-2 text-sm font-semibold text-black/62">
                   <CheckCircle2 className="size-4 shrink-0 text-tranquility-moss" aria-hidden="true" />
                   {item}
@@ -114,10 +119,8 @@ export function Home() {
 
                 <div className="max-w-sm rounded-[2rem] bg-tranquility-charcoal p-7 text-white shadow-soft">
                   <Sparkles className="size-6 text-tranquility-stone" aria-hidden="true" />
-                  <p className="mt-5 font-serif text-3xl leading-tight">Come home to tranquility.</p>
-                  <p className="mt-3 text-sm leading-6 text-white/68">
-                    Clear service choices, useful pricing guidance, and a simple path from first click to a cleaner space.
-                  </p>
+                  <p className="mt-5 font-serif text-3xl leading-tight">A cleaning experience that starts with clarity.</p>
+                  <p className="mt-3 text-sm leading-6 text-white/68">Choose the service, describe the property, and move into the pricing path that actually fits the space.</p>
                 </div>
               </div>
             </div>
@@ -132,8 +135,18 @@ export function Home() {
 
       <section className="border-y border-black/5 bg-white px-5 py-5 lg:px-8">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs font-bold uppercase tracking-[0.14em] text-black/42 md:justify-between">
-          {['Residential', 'Deep Cleaning', 'Move-In / Move-Out', 'Commercial', 'Virtual Quotes'].map((item) => (
-            <span key={item}>{item}</span>
+          {['Residential', 'Deep Cleaning', 'Move-In / Move-Out', 'Commercial', 'Virtual Quotes'].map((item) => <span key={item}>{item}</span>)}
+        </div>
+      </section>
+
+      <section className="px-5 py-16 lg:px-8 lg:py-20">
+        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+          {trustPoints.map(([title, body]) => (
+            <article key={title} className="rounded-[1.8rem] border border-black/7 bg-white p-7 shadow-soft">
+              <CheckCircle2 className="size-5 text-tranquility-moss" aria-hidden="true" />
+              <h2 className="mt-5 font-serif text-2xl">{title}</h2>
+              <p className="mt-3 text-sm leading-7 text-black/58">{body}</p>
+            </article>
           ))}
         </div>
       </section>
@@ -143,11 +156,9 @@ export function Home() {
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
             <div>
               <p className="eyebrow">Cleaning services</p>
-              <h2 className="mt-5 font-serif text-4xl tracking-tight sm:text-5xl">One clear place to understand what Tranquility can handle.</h2>
+              <h2 className="mt-5 font-serif text-4xl tracking-tight sm:text-5xl">The right service starts with the right level of care.</h2>
             </div>
-            <p className="max-w-2xl text-base leading-7 text-black/58 lg:justify-self-end">
-              The experience stays intentionally simple: choose a service, tell us about the property, personalize the scope, and move into the right booking or quote path.
-            </p>
+            <p className="max-w-2xl text-base leading-7 text-black/58 lg:justify-self-end">Choose a service, describe the property, personalize the scope, and move into the residential estimate or custom-quote path that makes sense.</p>
           </div>
 
           <div className="mt-12 grid gap-4 md:grid-cols-2">
@@ -165,9 +176,7 @@ export function Home() {
             ))}
           </div>
 
-          <div className="mt-8 text-center">
-            <ButtonLink to="/services" variant="secondary">Explore all services <ArrowRight className="ml-2 size-4" /></ButtonLink>
-          </div>
+          <div className="mt-8 text-center"><ButtonLink to="/services" variant="secondary">Compare services <ArrowRight className="ml-2 size-4" /></ButtonLink></div>
         </div>
       </section>
 
@@ -175,11 +184,9 @@ export function Home() {
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/45">Built to stay simple</p>
-              <h2 className="mt-5 max-w-xl font-serif text-4xl tracking-tight sm:text-5xl">Powerful underneath. Effortless for the customer.</h2>
-              <p className="mt-6 max-w-xl text-base leading-7 text-white/62">
-                Tranquility should never feel like a complicated app. The customer sees only the information needed to make a confident decision.
-              </p>
+              <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/45">Details that matter</p>
+              <h2 className="mt-5 max-w-xl font-serif text-4xl tracking-tight sm:text-5xl">Simple to use. Detailed enough to prepare properly.</h2>
+              <p className="mt-6 max-w-xl text-base leading-7 text-white/62">Customers should not need to fight through a complicated form to explain a home. Tranquility asks for the details that can actually affect scope, timing, or service preparation.</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {highlights.map((item) => (
@@ -201,9 +208,7 @@ export function Home() {
             {steps.map(({ icon: StepIcon, title, body }, index) => (
               <article key={title} className="rounded-[2rem] bg-white p-7 shadow-soft sm:p-8">
                 <div className="flex items-center justify-between">
-                  <span className="grid size-11 place-items-center rounded-full bg-tranquility-ivory text-tranquility-moss">
-                    <StepIcon className="size-5" aria-hidden="true" />
-                  </span>
+                  <span className="grid size-11 place-items-center rounded-full bg-tranquility-ivory text-tranquility-moss"><StepIcon className="size-5" aria-hidden="true" /></span>
                   <span className="text-xs font-bold tracking-[0.18em] text-black/30">0{index + 1}</span>
                 </div>
                 <h3 className="mt-7 font-serif text-2xl">{title}</h3>
@@ -219,9 +224,7 @@ export function Home() {
           <div className="p-8 sm:p-12 lg:p-14">
             <p className="eyebrow">Virtual consultation</p>
             <h2 className="mt-5 font-serif text-4xl tracking-tight sm:text-5xl">Some spaces deserve a closer look before the quote.</h2>
-            <p className="mt-6 max-w-xl text-base leading-7 text-black/60">
-              Customers can describe the property, note special conditions, and prepare interior photos for a more accurate custom review instead of forcing every job into a one-size-fits-all price.
-            </p>
+            <p className="mt-6 max-w-xl text-base leading-7 text-black/60">Describe the property, note special conditions, and select interior photos for a more accurate custom review instead of forcing every job into one price.</p>
             <ButtonLink className="mt-8" to="/quote">Start a virtual quote <ArrowRight className="ml-2 size-4" /></ButtonLink>
           </div>
           <div className="relative min-h-[360px] bg-[linear-gradient(135deg,#9aa596,#d7d0c4_48%,#f7f3ea)] p-8">
@@ -230,10 +233,21 @@ export function Home() {
               <div className="w-full max-w-sm rounded-[2rem] bg-white/90 p-7 shadow-soft backdrop-blur">
                 <ImageIcon className="size-6 text-tranquility-moss" aria-hidden="true" />
                 <p className="mt-4 font-serif text-2xl">Show the space, not yourself.</p>
-                <p className="mt-3 text-sm leading-6 text-black/58">Interior details can help explain scope while keeping the visual experience calm, neutral, and property-focused.</p>
+                <p className="mt-3 text-sm leading-6 text-black/58">Interior details can help explain scope while keeping the experience property-focused and private.</p>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="px-5 pb-20 lg:px-8 lg:pb-24">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-[2.4rem] border border-black/7 bg-white p-8 shadow-soft sm:p-12 lg:flex-row lg:items-center">
+          <div>
+            <p className="eyebrow">Service area</p>
+            <h2 className="mt-4 max-w-3xl font-serif text-4xl tracking-tight">Serving Dallas-Fort Worth and surrounding communities.</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-black/58">Check the primary service cities or send the property address to confirm availability in a nearby community.</p>
+          </div>
+          <ButtonLink to="/service-area" variant="secondary"><MapPin className="mr-2 size-4" />View service area</ButtonLink>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import { Menu, Phone, Sparkles, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
+import { BrandMark } from '@/components/brand/BrandMark'
 import { ButtonLink } from '@/components/ui/Button'
 import { primaryNav, siteConfig } from '@/config/site'
 import { cn } from '@/lib/utils'
@@ -25,26 +26,28 @@ export function Header() {
   }, [open])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-tranquility-ivory/95 backdrop-blur-xl">
-      <div className="border-b border-black/5 bg-tranquility-charcoal text-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-2 text-xs lg:px-8">
-          <Link className="flex items-center gap-2 text-white/75 hover:text-white" to="/service-area">
-            <Sparkles className="size-3.5" aria-hidden="true" />
-            Serving {siteConfig.serviceAreaShort}
+    <header className="sticky top-0 z-50 border-b border-black/5 bg-tranquility-ivory/95 backdrop-blur-xl supports-[backdrop-filter]:bg-tranquility-ivory/88">
+      <div className="border-b border-white/8 bg-tranquility-charcoal text-white">
+        <div className="mx-auto flex min-h-9 max-w-7xl items-center justify-between gap-4 px-5 text-[11px] sm:text-xs lg:px-8">
+          <Link className="flex min-w-0 items-center gap-2 text-white/72 transition hover:text-white" to="/service-area">
+            <Sparkles className="size-3.5 shrink-0" aria-hidden="true" />
+            <span className="truncate">Serving {siteConfig.serviceAreaShort}</span>
           </Link>
-          <a className="flex items-center gap-2 font-semibold text-white hover:text-white/80" href={siteConfig.phoneHref}>
+          <a className="flex shrink-0 items-center gap-2 font-semibold tracking-[0.01em] text-white transition hover:text-white/80" href={siteConfig.phoneHref}>
             <Phone className="size-3.5" aria-hidden="true" />
             {siteConfig.phone}
           </a>
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 lg:px-8">
-        <Link aria-label={`${siteConfig.name} home`} className="group flex items-center gap-3" to="/">
-          <span className="grid size-10 place-items-center rounded-full bg-tranquility-charcoal font-serif text-xl text-white shadow-soft transition-transform group-hover:scale-[1.03]">T</span>
+      <div className="mx-auto flex min-h-[76px] max-w-7xl items-center justify-between px-5 lg:px-8">
+        <Link aria-label={`${siteConfig.name} home`} className="group flex items-center gap-3.5" to="/">
+          <span className="grid size-11 place-items-center rounded-full bg-tranquility-charcoal text-white shadow-soft transition duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_18px_45px_-24px_rgba(35,40,37,0.65)]">
+            <BrandMark className="size-9" />
+          </span>
           <span>
-            <span className="block font-serif text-xl font-semibold leading-none tracking-tight">Tranquility</span>
-            <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.18em] text-tranquility-charcoal/45">Cleaning</span>
+            <span className="block font-serif text-[1.42rem] font-medium leading-none tracking-[-0.025em]">Tranquility</span>
+            <span className="mt-1.5 block text-[9px] font-bold uppercase tracking-[0.24em] text-tranquility-charcoal/45">Cleaning</span>
           </span>
         </Link>
 
@@ -53,7 +56,7 @@ export function Header() {
             <NavLink
               key={item.href}
               className={({ isActive }) => cn(
-                'relative py-2 text-[13px] font-semibold text-tranquility-charcoal/60 transition hover:text-tranquility-charcoal',
+                'relative py-2 text-[13px] font-semibold text-tranquility-charcoal/58 transition duration-200 hover:text-tranquility-charcoal',
                 isActive && 'text-tranquility-charcoal after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:bg-tranquility-moss',
               )}
               to={item.href}
@@ -61,15 +64,17 @@ export function Header() {
               {item.label}
             </NavLink>
           ))}
-          <ButtonLink to="/quote" variant="secondary">Get a quote</ButtonLink>
-          <ButtonLink to="/booking">Book now</ButtonLink>
+          <div className="ml-1 flex items-center gap-2.5">
+            <ButtonLink to="/quote" variant="secondary">Get a quote</ButtonLink>
+            <ButtonLink to="/booking">Book now</ButtonLink>
+          </div>
         </nav>
 
         <button
           aria-controls="mobile-navigation"
           aria-expanded={open}
           aria-label={open ? 'Close navigation' : 'Open navigation'}
-          className="grid size-11 place-items-center rounded-full border border-black/10 bg-white shadow-sm xl:hidden"
+          className="grid size-11 place-items-center rounded-full border border-black/10 bg-white shadow-sm transition hover:border-black/18 hover:bg-tranquility-ivory xl:hidden"
           onClick={() => setOpen((value) => !value)}
           type="button"
         >
@@ -78,13 +83,13 @@ export function Header() {
       </div>
 
       {open ? (
-        <nav aria-label="Mobile navigation" className="border-t border-black/5 bg-tranquility-ivory px-5 pb-5 xl:hidden" id="mobile-navigation">
-          <div className="grid gap-1 pt-3 sm:grid-cols-2 lg:grid-cols-3">
+        <nav aria-label="Mobile navigation" className="border-t border-black/6 bg-tranquility-ivory px-5 pb-5 shadow-[0_22px_45px_-35px_rgba(35,40,37,0.5)] xl:hidden" id="mobile-navigation">
+          <div className="mx-auto grid max-w-7xl gap-1 pt-3 sm:grid-cols-2 lg:grid-cols-3">
             {primaryNav.map((item) => (
               <NavLink
                 key={item.href}
                 className={({ isActive }) => cn(
-                  'rounded-2xl px-4 py-3 text-sm font-semibold text-tranquility-charcoal/70 hover:bg-white',
+                  'rounded-2xl px-4 py-3 text-sm font-semibold text-tranquility-charcoal/68 transition hover:bg-white hover:text-tranquility-charcoal',
                   isActive && 'bg-white text-tranquility-charcoal shadow-sm',
                 )}
                 to={item.href}

@@ -23,9 +23,9 @@ export function Careers() {
             <h2 className="mt-4 font-serif text-3xl">Start with a direct conversation.</h2>
             <p className="mt-4 text-sm leading-7 text-black/58">For current opportunities, contractor onboarding questions, or future availability, contact Tranquility directly.</p>
             <div className="mt-7 grid gap-3">
-              <a className="flex min-h-12 items-center gap-3 rounded-2xl bg-tranquility-ivory px-4 py-3 text-sm font-semibold hover:bg-tranquility-stone/35" href={`mailto:${siteConfig.email}?subject=Tranquility%20Career%20Inquiry`}>
+              <a className="flex min-h-12 items-center gap-3 rounded-2xl bg-tranquility-ivory px-4 py-3 text-sm font-semibold hover:bg-tranquility-stone/35" href={`mailto:${siteConfig.careerEmail}?subject=Tranquility%20Career%20Inquiry`}>
                 <Mail className="size-4 text-tranquility-moss" aria-hidden="true" />
-                {siteConfig.email}
+                {siteConfig.careerEmail}
               </a>
               <a className="flex min-h-12 items-center gap-3 rounded-2xl bg-tranquility-ivory px-4 py-3 text-sm font-semibold hover:bg-tranquility-stone/35" href={siteConfig.phoneHref}>
                 <Phone className="size-4 text-tranquility-moss" aria-hidden="true" />

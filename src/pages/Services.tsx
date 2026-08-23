@@ -21,6 +21,8 @@ const services = [
     includes: ['Kitchen and bathroom surfaces', 'Living and sleeping areas', 'Floor care within service scope', 'Room and pet details captured up front'],
     href: '/booking?service=standard',
     action: 'Estimate residential cleaning',
+    detailHref: '/residential-cleaning',
+    detailLabel: 'Residential details',
   },
   {
     icon: Sparkles,
@@ -32,6 +34,8 @@ const services = [
     includes: ['Expanded detail work', 'Fixtures and frequently missed surfaces', 'Higher-effort kitchen and bath care', 'Optional specialty add-ons'],
     href: '/booking?service=deep',
     action: 'Estimate a deep clean',
+    detailHref: '/residential-cleaning',
+    detailLabel: 'Residential details',
   },
   {
     icon: PackageCheck,
@@ -43,6 +47,8 @@ const services = [
     includes: ['Vacant-space cleaning path', 'Kitchen and bathroom detail', 'Cabinet/appliance add-ons available', 'Custom scope when property condition requires it'],
     href: '/booking?service=move-in-out',
     action: 'Estimate move cleaning',
+    detailHref: '/residential-cleaning',
+    detailLabel: 'Residential details',
   },
   {
     icon: Building2,
@@ -54,6 +60,8 @@ const services = [
     includes: ['Quote-based service planning', 'Frequency and access review', 'Custom property scope', 'Direct consultation before service'],
     href: '/quote?service=commercial',
     action: 'Request commercial quote',
+    detailHref: '/commercial-cleaning',
+    detailLabel: 'Commercial details',
   },
 ]
 
@@ -84,7 +92,7 @@ export function Services() {
         <div className="mx-auto max-w-7xl">
           <p className="eyebrow">Services</p>
           <div className="mt-5 grid gap-7 lg:grid-cols-[1fr_0.72fr] lg:items-end">
-            <h1 className="max-w-4xl font-serif text-5xl leading-[0.98] tracking-tight sm:text-6xl">Choose the cleaning path that fits the space.</h1>
+            <h1 className="max-w-4xl font-serif text-5xl leading-[0.98] tracking-editorial sm:text-6xl">Choose the cleaning path that fits the space.</h1>
             <p className="max-w-xl text-base leading-7 text-black/60 lg:justify-self-end">Residential jobs can begin with a base estimate. Commercial, larger, or more detailed spaces can move directly into a custom quote so the scope stays accurate.</p>
           </div>
         </div>
@@ -92,8 +100,8 @@ export function Services() {
 
       <section className="px-5 pb-20 lg:px-8 lg:pb-28">
         <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-2">
-          {services.map(({ icon: ServiceIcon, title, subtitle, bestFor, pricingPath, description, includes, href, action }) => (
-            <article key={title} className="flex flex-col rounded-[2.2rem] border border-black/7 bg-white p-7 shadow-soft sm:p-9">
+          {services.map(({ icon: ServiceIcon, title, subtitle, bestFor, pricingPath, description, includes, href, action, detailHref, detailLabel }) => (
+            <article key={title} className="flex flex-col rounded-[2.2rem] border border-black/7 bg-white p-7 shadow-premium sm:p-9">
               <div className="flex items-start justify-between gap-4">
                 <span className="grid size-12 place-items-center rounded-full bg-tranquility-ivory text-tranquility-moss"><ServiceIcon className="size-5" aria-hidden="true" /></span>
                 <span className="rounded-full bg-tranquility-stone/35 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-black/55">{subtitle}</span>
@@ -107,7 +115,10 @@ export function Services() {
               <div className="mt-7 grid gap-3 border-t border-black/7 pt-6 sm:grid-cols-2">
                 {includes.map((item) => <span key={item} className="flex items-start gap-2 text-sm text-black/62"><CheckCircle2 className="mt-0.5 size-4 shrink-0 text-tranquility-moss" aria-hidden="true" />{item}</span>)}
               </div>
-              <ButtonLink className="mt-8 self-start" to={href}>{action} <ArrowRight className="ml-2 size-4" /></ButtonLink>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <ButtonLink to={href}>{action} <ArrowRight className="ml-2 size-4" /></ButtonLink>
+                <ButtonLink to={detailHref} variant="secondary">{detailLabel}</ButtonLink>
+              </div>
             </article>
           ))}
         </div>
@@ -132,6 +143,7 @@ export function Services() {
               </tbody>
             </table>
           </div>
+          <ButtonLink className="mt-7" to="/residential-cleaning" variant="secondary">Explore residential cleaning <ArrowRight className="ml-2 size-4" /></ButtonLink>
         </div>
       </section>
 
@@ -145,7 +157,7 @@ export function Services() {
       </section>
 
       <section className="px-5 py-20 lg:px-8 lg:py-24">
-        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-[2.4rem] bg-white p-8 shadow-soft sm:p-12 lg:flex-row lg:items-center">
+        <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 rounded-[2.4rem] bg-white p-8 shadow-premium sm:p-12 lg:flex-row lg:items-center">
           <div><p className="eyebrow">Not sure which service fits?</p><h2 className="mt-4 max-w-2xl font-serif text-4xl tracking-tight">Start with the property details. Tranquility can route the job from there.</h2></div>
           <div className="flex flex-wrap gap-3 lg:justify-end"><ButtonLink to="/quote" variant="secondary">Request a quote</ButtonLink><ButtonLink to="/booking">Build an estimate <ArrowRight className="ml-2 size-4" /></ButtonLink></div>
         </div>

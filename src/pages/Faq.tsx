@@ -1,8 +1,10 @@
 const faqs = [
-  ['When am I charged?', 'The target production flow requires a valid payment method to reserve service while charging only after the cleaning is completed, subject to the final business policy and Stripe implementation.'],
-  ['Can pets stay home?', 'Yes, as long as they do not interfere with safe service completion. Animals that may become aggressive, anxious, or disruptive should be secured before the cleaning team arrives.'],
-  ['Can pricing change?', 'Yes. Instant residential pricing is a base estimate and can be adjusted when the actual property condition or requested scope materially differs from the submitted information.'],
-  ['What if I want a custom quote?', 'Use the virtual consultation path to describe the property and, once private storage is enabled, attach interior photos for a more accurate review.'],
+  ['When am I charged?', 'A valid payment method is required to reserve service. The intended Tranquility workflow is to charge after the cleaning is completed rather than collecting the full service amount at booking.'],
+  ['Can pets stay home?', 'Yes, as long as they do not interfere with safe service completion. Animals that may become aggressive, highly anxious, or disruptive should be secured before the cleaning team arrives.'],
+  ['Can pricing change?', 'Yes. Residential instant pricing is a base estimate. The final amount may change when the actual property condition, requested scope, or information provided differs materially from the booking details.'],
+  ['What if I want a custom quote?', 'Use the virtual consultation option to describe the property and include interior photos so Tranquility can review the scope more closely before service.'],
+  ['Do I need to provide cleaning supplies?', 'Tranquility is designed to arrive prepared with standard cleaning supplies. If you prefer specific products or have sensitivities, include that information with your service request.'],
+  ['Can I reschedule or cancel?', 'Appointments can be rescheduled or cancelled subject to the current Tranquility scheduling policy. Final cancellation windows and any applicable late-cancellation terms are confirmed with the booking.'],
 ]
 
 export function Faq() {

@@ -81,8 +81,8 @@ export function Contact() {
           <div>
             <MessageSquareText className="size-7 text-tranquility-moss" aria-hidden="true" />
             <p className="mt-6 eyebrow">General questions</p>
-            <h2 className="mt-4 max-w-xl font-serif text-4xl tracking-tight">Write the message here, then send it through your email app.</h2>
-            <p className="mt-5 max-w-xl text-sm leading-7 text-black/58">This keeps general inquiries functional without pretending a backend form submission exists before secure message persistence is connected.</p>
+            <h2 className="mt-4 max-w-xl font-serif text-4xl tracking-tight">Write your message without leaving the page.</h2>
+            <p className="mt-5 max-w-xl text-sm leading-7 text-black/58">Complete the short form and your email app will open with the message prepared. Nothing is sent until you choose to send it.</p>
           </div>
 
           <form className="rounded-[2rem] bg-tranquility-ivory p-7 sm:p-9" onSubmit={handleEmail}>

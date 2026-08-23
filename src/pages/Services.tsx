@@ -34,8 +34,8 @@ const services = [
     includes: ['Expanded detail work', 'Fixtures and frequently missed surfaces', 'Higher-effort kitchen and bath care', 'Optional specialty add-ons'],
     href: '/booking?service=deep',
     action: 'Estimate a deep clean',
-    detailHref: '/residential-cleaning',
-    detailLabel: 'Residential details',
+    detailHref: '/deep-cleaning',
+    detailLabel: 'Deep-clean details',
   },
   {
     icon: PackageCheck,
@@ -44,11 +44,11 @@ const services = [
     bestFor: 'Vacant or transitioning homes',
     pricingPath: 'Residential estimate or review',
     description: 'Cleaning for empty or transitioning homes when the goal is to leave the property feeling reset and ready.',
-    includes: ['Vacant-space cleaning path', 'Kitchen and bathroom detail', 'Cabinet/appliance add-ons available', 'Custom scope when property condition requires it'],
+    includes: ['Vacant-space cleaning path', 'Kitchen and bathroom detail', 'Appliance-interior add-ons available', 'Custom scope when property condition requires it'],
     href: '/booking?service=move-in-out',
     action: 'Estimate move cleaning',
-    detailHref: '/residential-cleaning',
-    detailLabel: 'Residential details',
+    detailHref: '/move-in-move-out-cleaning',
+    detailLabel: 'Move-clean details',
   },
   {
     icon: Building2,
@@ -143,7 +143,11 @@ export function Services() {
               </tbody>
             </table>
           </div>
-          <ButtonLink className="mt-7" to="/residential-cleaning" variant="secondary">Explore residential cleaning <ArrowRight className="ml-2 size-4" /></ButtonLink>
+          <div className="mt-7 flex flex-wrap gap-3">
+            <ButtonLink to="/residential-cleaning" variant="secondary">Residential overview <ArrowRight className="ml-2 size-4" /></ButtonLink>
+            <ButtonLink to="/deep-cleaning" variant="secondary">Deep cleaning</ButtonLink>
+            <ButtonLink to="/move-in-move-out-cleaning" variant="secondary">Move-In / Move-Out</ButtonLink>
+          </div>
         </div>
       </section>
 

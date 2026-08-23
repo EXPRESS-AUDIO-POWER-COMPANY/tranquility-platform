@@ -1,6 +1,6 @@
 # Tranquility Platform
 
-Production-oriented rebuild of Tranquility Cleaning's customer website and future operations platform.
+GitHub-first production WebApp for Tranquility Cleaning.
 
 ## Engineering principles
 
@@ -10,19 +10,23 @@ Production-oriented rebuild of Tranquility Cleaning's customer website and futur
 - Supabase will be introduced through migrations with intentional RLS and private storage policies.
 - Stripe secret operations will remain server-side; raw card data never touches application storage.
 
-## Current milestone
+## Current premium frontend milestone
 
-Implemented frontend foundation:
-- React + TypeScript + Vite
-- Tailwind CSS with shadcn-compatible configuration
-- responsive site shell and navigation
-- Home, About, FAQ, Careers, Booking, Quote, and 404 routes
-- typed residential pricing estimator using temporary seed configuration
-- virtual quote image-selection validation (no uploads yet)
-- Vitest pricing tests
-- GitHub Actions CI for lint, test, and build
+Implemented customer-facing scope:
 
-Production data submission, authentication, Supabase persistence, private photo storage, Stripe, scheduling, and admin tooling are intentionally not enabled yet.
+- premium responsive Home experience
+- Services overview
+- guided residential estimate and booking-profile workflow
+- virtual consultation / custom quote workflow
+- About / Why Tranquility
+- FAQ
+- Careers / contractor inquiries
+- Contact and DFW service-area experience
+- persistent mobile Book / Get Quote actions
+- route-level title/description metadata and scroll restoration
+- accessible navigation, focus states, reduced-motion handling, and route error boundaries
+
+Production data submission, authentication, Supabase persistence, private photo storage, Stripe, scheduling persistence, and admin tooling are intentionally deferred from this customer-interface milestone.
 
 ## Local development
 
@@ -41,8 +45,14 @@ npm run build
 
 ## Branch strategy
 
-- `main`: release-ready code
-- `development`: integrated development branch
-- `feature/*`: isolated implementation branches as the project expands
+- `main` — release destination
+- `development` — integrated development branch
+- `feature/*` — isolated implementation branches
 
-See `docs/architecture.md`, `docs/business-rules.md`, and `SECURITY.md` before introducing infrastructure changes.
+## Verification policy
+
+No feature branch is promoted merely because GitHub accepted its commits. Before release, the application must pass an executable Node quality gate covering dependency resolution, lint, tests, and production build.
+
+The repository's current GitHub Actions runner creates the `quality` job but fails before normal workflow steps are exposed. Until that runner issue is resolved, relevant PRs remain draft and carry the status `IMPLEMENTED — VERIFICATION REQUIRED`.
+
+See `docs/architecture.md`, `docs/business-rules.md`, `docs/backend-contracts.md`, and `SECURITY.md` before introducing infrastructure changes.

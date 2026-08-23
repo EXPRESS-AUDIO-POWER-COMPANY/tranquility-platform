@@ -11,10 +11,11 @@ const addOns: PricingAddOn[] = [
   { id: 'excess-pet-hair', name: 'Excess pet hair', price: 20, requiresReview: true },
 ]
 
-// Temporary version-controlled seed configuration for frontend development.
-// This is NOT production pricing authority. It will move to Supabase-managed
-// pricing rules before production booking is enabled.
+// Draft engineering pricing remains version-controlled only so calculator logic can
+// be developed and tested. It is never customer-facing unless an authorized
+// deployment explicitly enables VITE_ENABLE_LIVE_PRICING=true after business review.
 export const pricingConfig = {
+  livePricingEnabled: import.meta.env.VITE_ENABLE_LIVE_PRICING === 'true',
   minimumSquareFeet: 300,
   baseBySquareFootage: [
     { max: 999, price: 115 },

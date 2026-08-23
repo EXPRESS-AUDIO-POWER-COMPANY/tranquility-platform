@@ -34,13 +34,13 @@ export function Header() {
           </span>
         </Link>
 
-        <nav aria-label="Primary navigation" className="hidden items-center gap-6 lg:flex">
+        <nav aria-label="Primary navigation" className="hidden items-center gap-5 lg:flex">
           {primaryNav.map((item) => (
             <NavLink
               key={item.href}
               className={({ isActive }) =>
                 cn(
-                  'relative py-2 text-sm font-semibold text-tranquility-charcoal/60 transition hover:text-tranquility-charcoal',
+                  'relative py-2 text-[13px] font-semibold text-tranquility-charcoal/60 transition hover:text-tranquility-charcoal',
                   isActive && 'text-tranquility-charcoal after:absolute after:inset-x-0 after:-bottom-0.5 after:h-px after:bg-tranquility-moss',
                 )
               }

@@ -16,7 +16,7 @@ Implemented customer-facing scope:
 
 - premium responsive Home experience
 - Services overview
-- guided residential estimate and booking-profile workflow
+- four-stage guided residential estimate and booking-profile workflow
 - virtual consultation / custom quote workflow
 - About / Why Tranquility
 - FAQ

@@ -55,4 +55,8 @@ No feature branch is promoted merely because GitHub accepted its commits. Before
 
 The repository's current GitHub Actions runner creates the `quality` job but fails before normal workflow steps are exposed. Until that runner issue is resolved, relevant PRs remain draft and carry the status `IMPLEMENTED — VERIFICATION REQUIRED`.
 
+## Repository visibility
+
+No secrets, production credentials, customer data, Supabase keys, or Stripe keys may be committed. Repository visibility must be rechecked before infrastructure credentials are introduced because current connector metadata reports the repository as public.
+
 See `docs/architecture.md`, `docs/business-rules.md`, `docs/backend-contracts.md`, and `SECURITY.md` before introducing infrastructure changes.

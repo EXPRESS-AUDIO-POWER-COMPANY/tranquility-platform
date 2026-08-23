@@ -5,10 +5,12 @@ GitHub-first production WebApp for Tranquility Cleaning.
 ## Engineering principles
 
 - GitHub is the canonical source of truth.
+- `main` is the active implementation branch and the branch used for day-to-day development.
+- New feature branches will not be created unless the repository owner explicitly requests one.
 - The project must remain portable to VS Code and independent hosting.
 - Lovable may be used as a secondary visual/deployment environment without becoming a lock-in dependency.
-- Supabase will be introduced through migrations with intentional RLS and private storage policies.
-- Stripe secret operations will remain server-side; raw card data never touches application storage.
+- Supabase and payment infrastructure are intentionally deferred until the customer-facing WebApp is ready for that phase.
+- No secrets, customer data, Supabase service credentials, or payment secrets may be committed to source control.
 
 ## Current premium frontend milestone
 
@@ -43,17 +45,25 @@ npm test
 npm run build
 ```
 
-## Branch strategy
+## Development workflow
 
-- `main` — release destination
-- `development` — integrated development branch
-- `feature/*` — isolated implementation branches
+The working model is intentionally simple:
+
+```text
+main
+  ↓
+commit implementation
+  ↓
+verify
+  ↓
+continue building
+```
+
+Existing historical branches may remain visible in GitHub, but they are not part of the active workflow. Future engineering changes should be committed directly to `main` unless the owner explicitly asks for isolation through a branch.
 
 ## Verification policy
 
-No feature branch is promoted merely because GitHub accepted its commits. Before release, the application must pass an executable Node quality gate covering dependency resolution, lint, tests, and production build.
-
-The repository's current GitHub Actions runner creates the `quality` job but fails before normal workflow steps are exposed. Until that runner issue is resolved, relevant PRs remain draft and carry the status `IMPLEMENTED — VERIFICATION REQUIRED`.
+GitHub accepting a commit is not the same as a successful production build. The repository's current GitHub Actions runner creates the `quality` job but has been failing before normal workflow steps are exposed. Until that runner issue is resolved, code-level verification must be reported separately from commit success.
 
 ## Repository visibility
 

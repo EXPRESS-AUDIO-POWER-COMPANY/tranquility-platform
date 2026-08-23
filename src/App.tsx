@@ -3,6 +3,7 @@ import { SiteLayout } from '@/components/layout/SiteLayout'
 import { About } from '@/pages/About'
 import { Booking } from '@/pages/Booking'
 import { Careers } from '@/pages/Careers'
+import { Contact } from '@/pages/Contact'
 import { Faq } from '@/pages/Faq'
 import { Home } from '@/pages/Home'
 import { NotFound } from '@/pages/NotFound'
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { path: '/about', element: <About /> },
       { path: '/faq', element: <Faq /> },
       { path: '/careers', element: <Careers /> },
+      { path: '/contact', element: <Contact /> },
       { path: '*', element: <NotFound /> },
     ],
   },

@@ -1,13 +1,21 @@
 export type ServiceType = 'standard' | 'deep' | 'move-in-out'
 export type Frequency = 'one-time' | 'weekly' | 'biweekly' | 'monthly'
 
-export interface BookingEstimateInput {
-  serviceType: ServiceType
-  frequency: Frequency
-  squareFootage: number
+export interface RoomProfile {
   bedrooms: number
   fullBathrooms: number
   halfBathrooms: number
+  livingRooms: number
+  diningRooms: number
+  kitchens: number
+  laundryRooms: number
+  otherRooms: number
+}
+
+export interface BookingEstimateInput extends RoomProfile {
+  serviceType: ServiceType
+  frequency: Frequency
+  squareFootage: number
   petsPresent: boolean
   addOnIds: string[]
 }
@@ -20,6 +28,8 @@ export interface PricingAddOn {
 }
 
 export interface BookingEstimate {
+  serviceSubtotal: number
+  addOnTotal: number
   subtotal: number
   frequencyDiscount: number
   total: number

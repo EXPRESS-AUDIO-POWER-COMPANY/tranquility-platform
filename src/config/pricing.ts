@@ -11,9 +11,11 @@ const addOns: PricingAddOn[] = [
   { id: 'excess-pet-hair', name: 'Excess pet hair', price: 20, requiresReview: true },
 ]
 
-// Temporary version-controlled seed configuration. This will be moved into
-// Supabase-managed pricing tables before production booking is enabled.
+// Temporary version-controlled seed configuration for frontend development.
+// This is NOT production pricing authority. It will move to Supabase-managed
+// pricing rules before production booking is enabled.
 export const pricingConfig = {
+  minimumSquareFeet: 300,
   baseBySquareFootage: [
     { max: 999, price: 115 },
     { max: 1499, price: 145 },
@@ -27,9 +29,16 @@ export const pricingConfig = {
     deep: 1.45,
     'move-in-out': 1.6,
   } satisfies Record<ServiceType, number>,
-  bedroomIncrement: 12,
-  fullBathroomIncrement: 22,
-  halfBathroomIncrement: 12,
+  roomIncrements: {
+    bedroom: 12,
+    fullBathroom: 22,
+    halfBathroom: 12,
+    livingRoom: 8,
+    diningRoom: 6,
+    kitchen: 10,
+    laundryRoom: 8,
+    otherRoom: 10,
+  },
   petPresenceIncrement: 10,
   frequencyDiscounts: {
     'one-time': 0,

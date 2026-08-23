@@ -5,6 +5,25 @@ import type { Frequency, ServiceType } from '@/types/booking'
 
 const numberOptions = [0, 1, 2, 3, 4, 5, 6]
 
+type RoomCountFieldProps = {
+  label: string
+  value: number
+  onChange: (value: number) => void
+}
+
+function RoomCountField({ label, value, onChange }: RoomCountFieldProps) {
+  return (
+    <label className="grid gap-2 text-sm font-semibold">
+      {label}
+      <select className="field" value={value} onChange={(event) => onChange(Number(event.target.value))}>
+        {numberOptions.map((option) => (
+          <option key={option} value={option}>{option}</option>
+        ))}
+      </select>
+    </label>
+  )
+}
+
 export function BookingEstimator() {
   const [serviceType, setServiceType] = useState<ServiceType>('standard')
   const [frequency, setFrequency] = useState<Frequency>('one-time')
@@ -12,7 +31,13 @@ export function BookingEstimator() {
   const [bedrooms, setBedrooms] = useState(3)
   const [fullBathrooms, setFullBathrooms] = useState(2)
   const [halfBathrooms, setHalfBathrooms] = useState(0)
+  const [livingRooms, setLivingRooms] = useState(1)
+  const [diningRooms, setDiningRooms] = useState(1)
+  const [kitchens, setKitchens] = useState(1)
+  const [laundryRooms, setLaundryRooms] = useState(1)
+  const [otherRooms, setOtherRooms] = useState(0)
   const [petsPresent, setPetsPresent] = useState(false)
+  const [petDetails, setPetDetails] = useState('')
   const [addOnIds, setAddOnIds] = useState<string[]>([])
 
   const estimate = useMemo(
@@ -24,10 +49,29 @@ export function BookingEstimator() {
         bedrooms,
         fullBathrooms,
         halfBathrooms,
+        livingRooms,
+        diningRooms,
+        kitchens,
+        laundryRooms,
+        otherRooms,
         petsPresent,
         addOnIds,
       }),
-    [serviceType, frequency, squareFootage, bedrooms, fullBathrooms, halfBathrooms, petsPresent, addOnIds],
+    [
+      serviceType,
+      frequency,
+      squareFootage,
+      bedrooms,
+      fullBathrooms,
+      halfBathrooms,
+      livingRooms,
+      diningRooms,
+      kitchens,
+      laundryRooms,
+      otherRooms,
+      petsPresent,
+      addOnIds,
+    ],
   )
 
   function toggleAddOn(id: string) {
@@ -57,34 +101,47 @@ export function BookingEstimator() {
               <option value="monthly">Monthly</option>
             </select>
           </label>
-          <label className="grid gap-2 text-sm font-semibold">
+          <label className="grid gap-2 text-sm font-semibold sm:col-span-2">
             Approx. square footage
-            <input className="field" min="300" onChange={(event) => setSquareFootage(Number(event.target.value))} step="50" type="number" value={squareFootage} />
+            <input
+              className="field"
+              min={pricingConfig.minimumSquareFeet}
+              onChange={(event) => setSquareFootage(Number(event.target.value))}
+              step="50"
+              type="number"
+              value={squareFootage}
+            />
           </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Bedrooms
-            <select className="field" value={bedrooms} onChange={(event) => setBedrooms(Number(event.target.value))}>
-              {numberOptions.map((value) => <option key={value} value={value}>{value}</option>)}
-            </select>
-          </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Full bathrooms
-            <select className="field" value={fullBathrooms} onChange={(event) => setFullBathrooms(Number(event.target.value))}>
-              {numberOptions.map((value) => <option key={value} value={value}>{value}</option>)}
-            </select>
-          </label>
-          <label className="grid gap-2 text-sm font-semibold">
-            Half bathrooms
-            <select className="field" value={halfBathrooms} onChange={(event) => setHalfBathrooms(Number(event.target.value))}>
-              {numberOptions.map((value) => <option key={value} value={value}>{value}</option>)}
-            </select>
-          </label>
+          <RoomCountField label="Bedrooms" onChange={setBedrooms} value={bedrooms} />
+          <RoomCountField label="Full bathrooms" onChange={setFullBathrooms} value={fullBathrooms} />
+          <RoomCountField label="Half bathrooms" onChange={setHalfBathrooms} value={halfBathrooms} />
+          <RoomCountField label="Living rooms" onChange={setLivingRooms} value={livingRooms} />
+          <RoomCountField label="Dining rooms" onChange={setDiningRooms} value={diningRooms} />
+          <RoomCountField label="Kitchens" onChange={setKitchens} value={kitchens} />
+          <RoomCountField label="Laundry rooms" onChange={setLaundryRooms} value={laundryRooms} />
+          <RoomCountField label="Other rooms / spaces" onChange={setOtherRooms} value={otherRooms} />
         </div>
 
-        <label className="mt-6 flex items-center gap-3 rounded-2xl border border-black/10 p-4 text-sm font-medium">
-          <input checked={petsPresent} onChange={(event) => setPetsPresent(event.target.checked)} type="checkbox" />
-          Pets will be present during service
-        </label>
+        <div className="mt-6 rounded-2xl border border-black/10 p-4">
+          <label className="flex items-center gap-3 text-sm font-medium">
+            <input checked={petsPresent} onChange={(event) => setPetsPresent(event.target.checked)} type="checkbox" />
+            Pets will be present during service
+          </label>
+          {petsPresent ? (
+            <label className="mt-4 grid gap-2 text-sm font-semibold">
+              Pet type, count, and anything the cleaning team should know
+              <textarea
+                className="field min-h-24"
+                onChange={(event) => setPetDetails(event.target.value)}
+                placeholder="Example: 2 dogs. Friendly and usually stay in the living room."
+                value={petDetails}
+              />
+            </label>
+          ) : null}
+          <p className="mt-3 text-xs leading-5 text-black/55">
+            Pets may remain in the home when they do not interfere with safe service completion. Please secure any animal that may become aggressive, highly anxious, or disruptive.
+          </p>
+        </div>
 
         <fieldset className="mt-8">
           <legend className="text-sm font-bold">Optional add-ons</legend>
@@ -107,15 +164,23 @@ export function BookingEstimator() {
         {estimate.requiresManualQuote ? (
           <>
             <p className="mt-4 font-serif text-4xl">Custom quote</p>
-            <p className="mt-4 text-sm leading-6 text-white/70">Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to virtual consultation so pricing can be reviewed accurately.</p>
+            <p className="mt-4 text-sm leading-6 text-white/70">
+              Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to virtual consultation so pricing can be reviewed accurately.
+            </p>
           </>
         ) : (
           <>
             <p className="mt-4 font-serif text-5xl">${estimate.total}</p>
-            {estimate.frequencyDiscount > 0 ? <p className="mt-2 text-sm text-white/65">Includes ${estimate.frequencyDiscount} recurring-service discount.</p> : null}
+            <dl className="mt-5 grid gap-2 text-sm text-white/70">
+              <div className="flex justify-between gap-4"><dt>Cleaning service</dt><dd>${estimate.serviceSubtotal}</dd></div>
+              {estimate.frequencyDiscount > 0 ? <div className="flex justify-between gap-4"><dt>Recurring discount</dt><dd>−${estimate.frequencyDiscount}</dd></div> : null}
+              {estimate.addOnTotal > 0 ? <div className="flex justify-between gap-4"><dt>Add-ons</dt><dd>+${estimate.addOnTotal}</dd></div> : null}
+            </dl>
           </>
         )}
-        <p className="mt-6 border-t border-white/15 pt-5 text-xs leading-5 text-white/55">Planning estimate only. Final production pricing will be controlled through Tranquility's admin-managed pricing rules and may change when property condition or service scope materially differs from the submitted details.</p>
+        <p className="mt-6 border-t border-white/15 pt-5 text-xs leading-5 text-white/55">
+          Planning estimate only. Final production pricing will be controlled through Tranquility&apos;s admin-managed pricing rules and may change when property condition or service scope materially differs from the submitted details.
+        </p>
       </aside>
     </div>
   )

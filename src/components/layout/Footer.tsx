@@ -22,6 +22,7 @@ export function Footer() {
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/42">Explore</p>
           <div className="mt-5 grid gap-3 text-sm font-semibold text-white/76">
             <Link className="hover:text-white" to="/services">Services</Link>
+            <Link className="hover:text-white" to="/service-area">Service Area</Link>
             <Link className="hover:text-white" to="/booking">Build an estimate</Link>
             <Link className="hover:text-white" to="/quote">Virtual quote</Link>
             <Link className="hover:text-white" to="/about">About</Link>
@@ -51,9 +52,12 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-white/8 px-5 py-5 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 text-xs text-white/35">
-          <span>Tranquility Cleaning</span>
-          <span>Dallas-Fort Worth, Texas</span>
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 text-xs text-white/35">
+          <span>© {new Date().getFullYear()} Tranquility Cleaning • Dallas-Fort Worth, Texas</span>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link className="hover:text-white" to="/privacy">Privacy</Link>
+            <Link className="hover:text-white" to="/terms">Terms</Link>
+          </div>
         </div>
       </div>
     </footer>

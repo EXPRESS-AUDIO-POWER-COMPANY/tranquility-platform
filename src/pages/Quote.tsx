@@ -33,7 +33,7 @@ export function Quote() {
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    setNotice(`Online quote submission is being finalized. For immediate assistance, contact ${siteConfig.phone} or ${siteConfig.email}.`)
+    setNotice(`Your quote profile is ready for the secure submission layer. Until online persistence is activated, contact ${siteConfig.phone} or ${siteConfig.email} for immediate assistance.`)
   }
 
   return (
@@ -45,12 +45,7 @@ export function Quote() {
             <h1 className="mt-5 font-serif text-4xl tracking-tight sm:text-5xl">Show us the space. We&apos;ll understand the scope.</h1>
             <p className="mt-6 text-sm leading-7 text-white/62">Use this path when the property needs a closer look than instant residential pricing can provide.</p>
             <div className="mt-8 grid gap-4 border-t border-white/10 pt-7">
-              {[
-                'Residential custom quotes',
-                'Larger homes and unusual layouts',
-                'Commercial cleaning inquiries',
-                'Special conditions or detailed scope',
-              ].map((item) => (
+              {['Residential custom quotes', 'Larger homes and unusual layouts', 'Commercial cleaning inquiries', 'Special conditions or detailed scope'].map((item) => (
                 <span key={item} className="flex items-start gap-3 text-sm text-white/78">
                   <CheckCircle2 className="mt-0.5 size-4 shrink-0 text-tranquility-stone" aria-hidden="true" />
                   {item}
@@ -103,13 +98,7 @@ export function Quote() {
               <Camera className="size-6 text-tranquility-moss" aria-hidden="true" />
               <p className="mt-4 font-semibold">Add interior property photos</p>
               <p className="mt-2 text-sm leading-6 text-black/55">Choose up to {MAX_FILES} JPG, PNG, WebP, or HEIC images, maximum 8 MB each.</p>
-              <input
-                accept="image/jpeg,image/png,image/webp,image/heic"
-                className="mt-5 block w-full text-sm"
-                multiple
-                onChange={(event) => handleFiles(event.target.files)}
-                type="file"
-              />
+              <input accept="image/jpeg,image/png,image/webp,image/heic" className="mt-5 block w-full text-sm" multiple onChange={(event) => handleFiles(event.target.files)} type="file" />
               {error ? <p className="mt-4 text-sm font-semibold text-red-700" role="alert">{error}</p> : null}
               {files.length ? (
                 <div className="mt-5 grid gap-2 sm:grid-cols-2">
@@ -129,13 +118,11 @@ export function Quote() {
             </div>
 
             <div className="mt-8 flex flex-wrap items-center gap-4">
-              <Button type="submit">Prepare quote request</Button>
+              <Button type="submit">Review quote profile</Button>
               <span className="text-xs text-black/45">No payment information is requested on this form.</span>
             </div>
 
-            {notice ? (
-              <p className="mt-5 rounded-2xl border border-tranquility-sage/30 bg-tranquility-sage/10 p-4 text-sm leading-6 text-black/70" role="status">{notice}</p>
-            ) : null}
+            {notice ? <p className="mt-5 rounded-2xl border border-tranquility-sage/30 bg-tranquility-sage/10 p-4 text-sm leading-6 text-black/70" role="status">{notice}</p> : null}
           </form>
         </div>
       </div>

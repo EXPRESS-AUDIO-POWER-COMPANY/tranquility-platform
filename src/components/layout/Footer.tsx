@@ -27,6 +27,7 @@ export function Footer() {
             <Link className="hover:text-white" to="/about">About</Link>
             <Link className="hover:text-white" to="/faq">FAQ</Link>
             <Link className="hover:text-white" to="/careers">Careers</Link>
+            <Link className="hover:text-white" to="/contact">Contact</Link>
           </div>
         </div>
 
@@ -45,6 +46,7 @@ export function Footer() {
               <MapPin className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
               {siteConfig.serviceArea}
             </span>
+            <Link className="text-sm font-semibold text-white hover:text-white/80" to="/contact">Contact options →</Link>
           </div>
         </div>
       </div>

@@ -5,8 +5,10 @@ import { Booking } from '@/pages/Booking'
 import { Careers } from '@/pages/Careers'
 import { CommercialCleaning } from '@/pages/CommercialCleaning'
 import { Contact } from '@/pages/Contact'
+import { DeepCleaning } from '@/pages/DeepCleaning'
 import { Faq } from '@/pages/Faq'
 import { Home } from '@/pages/Home'
+import { MoveCleaning } from '@/pages/MoveCleaning'
 import { NotFound } from '@/pages/NotFound'
 import { Privacy } from '@/pages/Privacy'
 import { Quote } from '@/pages/Quote'
@@ -24,6 +26,8 @@ const router = createBrowserRouter([
       { path: '/', element: <Home /> },
       { path: '/services', element: <Services /> },
       { path: '/residential-cleaning', element: <ResidentialCleaning /> },
+      { path: '/deep-cleaning', element: <DeepCleaning /> },
+      { path: '/move-in-move-out-cleaning', element: <MoveCleaning /> },
       { path: '/commercial-cleaning', element: <CommercialCleaning /> },
       { path: '/service-area', element: <ServiceArea /> },
       { path: '/booking', element: <Booking /> },

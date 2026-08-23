@@ -6,19 +6,25 @@ const serviceModes = [
     title: 'Standard Cleaning',
     label: 'Routine maintenance',
     body: 'A practical one-time or recurring option for occupied homes that need consistent upkeep across the primary living spaces.',
-    href: '/booking?service=standard',
+    detailHref: '/residential-cleaning',
+    estimateHref: '/booking?service=standard',
+    detailLabel: 'Standard overview',
   },
   {
     title: 'Deep Cleaning',
     label: 'Detailed reset',
     body: 'A more intensive path for homes that need additional time around buildup, fixtures, kitchens, bathrooms, and often-missed details.',
-    href: '/booking?service=deep',
+    detailHref: '/deep-cleaning',
+    estimateHref: '/booking?service=deep',
+    detailLabel: 'Deep-clean details',
   },
   {
     title: 'Move-In / Move-Out',
     label: 'Transition cleaning',
     body: 'A property-reset path for vacant or transitioning homes where the cleaning scope is different from ordinary maintenance service.',
-    href: '/booking?service=move-in-out',
+    detailHref: '/move-in-move-out-cleaning',
+    estimateHref: '/booking?service=move-in-out',
+    detailLabel: 'Move-clean details',
   },
 ]
 
@@ -59,7 +65,7 @@ export function ResidentialCleaning() {
             <h1 className="mt-5 max-w-4xl font-serif text-5xl leading-[0.98] tracking-editorial sm:text-6xl lg:text-7xl">A cleaning plan built around the way your home actually lives.</h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-black/62">Tranquility keeps the customer experience straightforward while still collecting the property details that matter for preparation, scope, and pricing.</p>
             <div className="mt-9 flex flex-wrap gap-3">
-              <ButtonLink to="/booking">Build my estimate <ArrowRight className="ml-2 size-4" /></ButtonLink>
+              <ButtonLink to="/booking?service=standard">Build my estimate <ArrowRight className="ml-2 size-4" /></ButtonLink>
               <ButtonLink to="/quote" variant="secondary">Request a closer review</ButtonLink>
             </div>
           </div>
@@ -92,7 +98,10 @@ export function ResidentialCleaning() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-tranquility-moss">{service.label}</p>
                 <h3 className="mt-4 font-serif text-3xl">{service.title}</h3>
                 <p className="mt-4 flex-1 text-sm leading-7 text-black/58">{service.body}</p>
-                <ButtonLink className="mt-7 self-start" to={service.href} variant="secondary">Start this estimate <ArrowRight className="ml-2 size-4" /></ButtonLink>
+                <div className="mt-7 flex flex-wrap gap-2">
+                  <ButtonLink to={service.estimateHref}>Start estimate <ArrowRight className="ml-2 size-4" /></ButtonLink>
+                  <ButtonLink to={service.detailHref} variant="secondary">{service.detailLabel}</ButtonLink>
+                </div>
               </article>
             ))}
           </div>
@@ -142,7 +151,7 @@ export function ResidentialCleaning() {
           </div>
           <div className="flex flex-wrap gap-3 lg:justify-end">
             <ButtonLink to="/quote" variant="secondary">Custom quote</ButtonLink>
-            <ButtonLink to="/booking">Build my estimate <ArrowRight className="ml-2 size-4" /></ButtonLink>
+            <ButtonLink to="/booking?service=standard">Build my estimate <ArrowRight className="ml-2 size-4" /></ButtonLink>
           </div>
         </div>
       </section>

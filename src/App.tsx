@@ -3,12 +3,14 @@ import { SiteLayout } from '@/components/layout/SiteLayout'
 import { About } from '@/pages/About'
 import { Booking } from '@/pages/Booking'
 import { Careers } from '@/pages/Careers'
+import { CommercialCleaning } from '@/pages/CommercialCleaning'
 import { Contact } from '@/pages/Contact'
 import { Faq } from '@/pages/Faq'
 import { Home } from '@/pages/Home'
 import { NotFound } from '@/pages/NotFound'
 import { Privacy } from '@/pages/Privacy'
 import { Quote } from '@/pages/Quote'
+import { ResidentialCleaning } from '@/pages/ResidentialCleaning'
 import { RouteError } from '@/pages/RouteError'
 import { ServiceArea } from '@/pages/ServiceArea'
 import { Services } from '@/pages/Services'
@@ -21,6 +23,8 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <Home /> },
       { path: '/services', element: <Services /> },
+      { path: '/residential-cleaning', element: <ResidentialCleaning /> },
+      { path: '/commercial-cleaning', element: <CommercialCleaning /> },
       { path: '/service-area', element: <ServiceArea /> },
       { path: '/booking', element: <Booking /> },
       { path: '/quote', element: <Quote /> },

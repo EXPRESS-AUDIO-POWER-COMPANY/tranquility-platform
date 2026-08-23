@@ -32,11 +32,9 @@ export const siteConfig = {
 } as const
 
 export const primaryNav = [
-  { label: 'Home', href: '/' },
   { label: 'Services', href: '/services' },
   { label: 'Service Area', href: '/service-area' },
   { label: 'About', href: '/about' },
   { label: 'FAQ', href: '/faq' },
-  { label: 'Careers', href: '/careers' },
   { label: 'Contact', href: '/contact' },
 ] as const

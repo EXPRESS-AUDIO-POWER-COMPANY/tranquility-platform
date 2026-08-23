@@ -9,6 +9,22 @@ export const siteConfig = {
   email: 'tlcllc26@gmail.com',
   serviceArea: 'Dallas-Fort Worth and surrounding communities',
   serviceAreaShort: 'Dallas-Fort Worth',
+  serviceCities: [
+    'Dallas',
+    'Fort Worth',
+    'Arlington',
+    'Plano',
+    'Irving',
+    'Garland',
+    'Frisco',
+    'McKinney',
+    'Grand Prairie',
+    'Denton',
+    'Mesquite',
+    'Carrollton',
+    'Lewisville',
+    'Richardson',
+  ],
 } as const
 
 export const primaryNav = [
@@ -17,4 +33,5 @@ export const primaryNav = [
   { label: 'About', href: '/about' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Careers', href: '/careers' },
+  { label: 'Contact', href: '/contact' },
 ] as const

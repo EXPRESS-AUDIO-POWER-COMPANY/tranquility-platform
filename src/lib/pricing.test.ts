@@ -22,7 +22,6 @@ const baseInput = {
 describe('calculateBookingEstimate', () => {
   it('calculates a standard one-time residential estimate', () => {
     const result = calculateBookingEstimate({ ...baseInput, addOnIds: ['oven'] })
-
     expect(result.requiresManualQuote).toBe(false)
     expect(result.serviceSubtotal).toBe(287)
     expect(result.addOnTotal).toBe(30)
@@ -43,7 +42,6 @@ describe('calculateBookingEstimate', () => {
       petsPresent: true,
       addOnIds: ['refrigerator'],
     })
-
     expect(result.serviceSubtotal).toBe(355)
     expect(result.addOnTotal).toBe(30)
     expect(result.frequencyDiscount).toBe(36)
@@ -53,7 +51,6 @@ describe('calculateBookingEstimate', () => {
   it('keeps fixed-price add-ons fixed across service multipliers and recurring discounts', () => {
     const withoutAddOn = calculateBookingEstimate({ ...baseInput, serviceType: 'move-in-out', frequency: 'weekly' })
     const withAddOn = calculateBookingEstimate({ ...baseInput, serviceType: 'move-in-out', frequency: 'weekly', addOnIds: ['oven'] })
-
     expect(withAddOn.total - withoutAddOn.total).toBe(30)
   })
 
@@ -63,21 +60,13 @@ describe('calculateBookingEstimate', () => {
   })
 
   it('keeps the configured maximum instant-pricing size on the estimate path', () => {
-    const result = calculateBookingEstimate({
-      ...baseInput,
-      squareFootage: pricingConfig.manualQuoteAboveSquareFeet,
-    })
-
+    const result = calculateBookingEstimate({ ...baseInput, squareFootage: pricingConfig.manualQuoteAboveSquareFeet })
     expect(result.requiresManualQuote).toBe(false)
     expect(result.total).toBeGreaterThan(0)
   })
 
   it('routes the first square foot above the configured threshold to manual quoting', () => {
-    const result = calculateBookingEstimate({
-      ...baseInput,
-      squareFootage: pricingConfig.manualQuoteAboveSquareFeet + 1,
-    })
-
+    const result = calculateBookingEstimate({ ...baseInput, squareFootage: pricingConfig.manualQuoteAboveSquareFeet + 1 })
     expect(result).toEqual({
       serviceSubtotal: 0,
       addOnTotal: 0,
@@ -106,7 +95,6 @@ describe('calculateBookingEstimate', () => {
   it('rejects malformed runtime service and frequency values', () => {
     const invalidService = { ...baseInput, serviceType: 'invalid' } as unknown as BookingEstimateInput
     const invalidFrequency = { ...baseInput, frequency: 'daily' } as unknown as BookingEstimateInput
-
     expect(() => calculateBookingEstimate(invalidService)).toThrow('Unknown service type')
     expect(() => calculateBookingEstimate(invalidFrequency)).toThrow('Unknown frequency')
   })
@@ -114,8 +102,9 @@ describe('calculateBookingEstimate', () => {
   it('rejects malformed runtime pet and add-on collection values', () => {
     const invalidPets = { ...baseInput, petsPresent: 'yes' } as unknown as BookingEstimateInput
     const invalidAddOns = { ...baseInput, addOnIds: 'oven' } as unknown as BookingEstimateInput
-
+    const invalidAddOnEntry = { ...baseInput, addOnIds: [undefined] } as unknown as BookingEstimateInput
     expect(() => calculateBookingEstimate(invalidPets)).toThrow(TypeError)
     expect(() => calculateBookingEstimate(invalidAddOns)).toThrow(TypeError)
+    expect(() => calculateBookingEstimate(invalidAddOnEntry)).toThrow('Unknown add-on')
   })
 })

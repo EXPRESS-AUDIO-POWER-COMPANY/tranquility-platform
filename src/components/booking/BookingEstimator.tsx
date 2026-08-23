@@ -47,6 +47,11 @@ function getLocalToday() {
   return local.toISOString().slice(0, 10)
 }
 
+function getInitialServiceType(): ServiceType {
+  const requested = new URLSearchParams(window.location.search).get('service')
+  return requested === 'deep' || requested === 'move-in-out' || requested === 'standard' ? requested : 'standard'
+}
+
 function serviceLabel(serviceType: ServiceType) {
   if (serviceType === 'deep') return 'Deep clean'
   if (serviceType === 'move-in-out') return 'Move-in / move-out'
@@ -61,7 +66,7 @@ function frequencyLabel(frequency: Frequency) {
 
 export function BookingEstimator() {
   const [step, setStep] = useState(1)
-  const [serviceType, setServiceType] = useState<ServiceType>('standard')
+  const [serviceType, setServiceType] = useState<ServiceType>(getInitialServiceType)
   const [frequency, setFrequency] = useState<Frequency>('one-time')
   const [squareFootage, setSquareFootage] = useState(1500)
   const [propertyCondition, setPropertyCondition] = useState<PropertyCondition>('routine')
@@ -112,10 +117,7 @@ export function BookingEstimator() {
         error: null,
       }
     } catch (error) {
-      return {
-        estimate: null,
-        error: error instanceof Error ? error.message : 'Enter valid property details to calculate an estimate.',
-      }
+      return { estimate: null, error: error instanceof Error ? error.message : 'Enter valid property details to calculate an estimate.' }
     }
   }, [serviceType, frequency, squareFootage, bedrooms, fullBathrooms, halfBathrooms, livingRooms, diningRooms, kitchens, laundryRooms, otherRooms, petsPresent, addOnIds])
 
@@ -125,17 +127,13 @@ export function BookingEstimator() {
   const dateValid = preferredDate.length > 0 && preferredDate >= today
   const otherSpaceComplete = otherRooms === 0 || otherSpaceDetails.trim().length >= 2
   const petDetailsComplete = !petsPresent || petDetails.trim().length >= 2
-  const contactComplete =
-    fullName.trim().length >= 2 && emailValid && phoneValid && streetAddress.trim().length >= 4 &&
-    city.trim().length >= 2 && postalCodeValid && dateValid && arrivalWindow.trim().length > 0
+  const contactComplete = fullName.trim().length >= 2 && emailValid && phoneValid && streetAddress.trim().length >= 4 && city.trim().length >= 2 && postalCodeValid && dateValid && arrivalWindow.trim().length > 0
 
   const estimate = estimateState.estimate
   const selectedAddOns = pricingConfig.addOns.filter((addOn) => addOnIds.includes(addOn.id))
   const conditionReviewRecommended = propertyCondition !== 'routine' || selectedAddOns.some((addOn) => addOn.requiresReview)
 
-  function resetReview() {
-    setReadyForReview(false)
-  }
+  function resetReview() { setReadyForReview(false) }
 
   function toggleAddOn(id: string) {
     setAddOnIds((current) => current.includes(id) ? current.filter((item) => item !== id) : [...current, id])
@@ -163,14 +161,7 @@ export function BookingEstimator() {
             const active = itemStep === step
             const complete = itemStep < step
             return (
-              <button
-                key={label}
-                aria-current={active ? 'step' : undefined}
-                className="group text-left disabled:cursor-default"
-                disabled={itemStep > step}
-                onClick={() => goToStep(itemStep)}
-                type="button"
-              >
+              <button key={label} aria-current={active ? 'step' : undefined} className="group text-left disabled:cursor-default" disabled={itemStep > step} onClick={() => goToStep(itemStep)} type="button">
                 <span className={`mb-2 block h-1.5 rounded-full ${active || complete ? 'bg-tranquility-moss' : 'bg-black/8'}`} />
                 <span className={`text-[10px] font-bold uppercase tracking-[0.13em] ${active ? 'text-tranquility-charcoal' : 'text-black/45'}`}>{String(itemStep).padStart(2, '0')} {label}</span>
               </button>
@@ -184,99 +175,40 @@ export function BookingEstimator() {
             <h2 className="mt-3 font-serif text-3xl">Start with the cleaning you need.</h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Choose the residential service, frequency, size, and general condition. The planning estimate updates as you go.</p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              <label className="grid gap-2 text-sm font-semibold">
-                Service type
-                <select className="field" value={serviceType} onChange={(event) => { setServiceType(event.target.value as ServiceType); resetReview() }}>
-                  <option value="standard">Standard clean</option><option value="deep">Deep clean</option><option value="move-in-out">Move-in / move-out</option>
-                </select>
-              </label>
-              <label className="grid gap-2 text-sm font-semibold">
-                Frequency
-                <select className="field" value={frequency} onChange={(event) => { setFrequency(event.target.value as Frequency); resetReview() }}>
-                  <option value="one-time">One-time</option><option value="weekly">Weekly</option><option value="biweekly">Biweekly</option><option value="monthly">Monthly</option>
-                </select>
-              </label>
-              <label className="grid gap-2 text-sm font-semibold sm:col-span-2">
-                Approx. square footage
-                <input aria-describedby="square-footage-help" className="field" min={pricingConfig.minimumSquareFeet} onChange={(event) => { setSquareFootage(Number(event.target.value)); resetReview() }} step="50" type="number" value={squareFootage} />
-                <span className="text-xs font-normal text-black/50" id="square-footage-help">Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to a custom quote for a closer review.</span>
-              </label>
-              <label className="grid gap-2 text-sm font-semibold sm:col-span-2">
-                Current property condition
-                <select className="field" value={propertyCondition} onChange={(event) => { setPropertyCondition(event.target.value as PropertyCondition); resetReview() }}>
-                  <option value="routine">Routine / normally maintained</option><option value="needs-attention">Needs extra attention</option><option value="not-sure">Not sure — I want guidance</option>
-                </select>
-                <span className="text-xs font-normal text-black/50">Condition does not automatically change this planning estimate. It helps identify when a closer review may be useful.</span>
-              </label>
+              <label className="grid gap-2 text-sm font-semibold">Service type<select className="field" value={serviceType} onChange={(event) => { setServiceType(event.target.value as ServiceType); resetReview() }}><option value="standard">Standard clean</option><option value="deep">Deep clean</option><option value="move-in-out">Move-in / move-out</option></select></label>
+              <label className="grid gap-2 text-sm font-semibold">Frequency<select className="field" value={frequency} onChange={(event) => { setFrequency(event.target.value as Frequency); resetReview() }}><option value="one-time">One-time</option><option value="weekly">Weekly</option><option value="biweekly">Biweekly</option><option value="monthly">Monthly</option></select></label>
+              <label className="grid gap-2 text-sm font-semibold sm:col-span-2">Approx. square footage<input aria-describedby="square-footage-help" className="field" min={pricingConfig.minimumSquareFeet} onChange={(event) => { setSquareFootage(Number(event.target.value)); resetReview() }} step="50" type="number" value={squareFootage} /><span className="text-xs font-normal text-black/50" id="square-footage-help">Homes above {pricingConfig.manualQuoteAboveSquareFeet.toLocaleString()} sq ft move to a custom quote for a closer review.</span></label>
+              <label className="grid gap-2 text-sm font-semibold sm:col-span-2">Current property condition<select className="field" value={propertyCondition} onChange={(event) => { setPropertyCondition(event.target.value as PropertyCondition); resetReview() }}><option value="routine">Routine / normally maintained</option><option value="needs-attention">Needs extra attention</option><option value="not-sure">Not sure — I want guidance</option></select><span className="text-xs font-normal text-black/50">Condition does not automatically change this planning estimate. It helps identify when a closer review may be useful.</span></label>
             </div>
           </section>
         ) : null}
 
         {step === 2 ? (
           <section className="pt-7">
-            <p className="eyebrow">Rooms and spaces</p>
-            <h2 className="mt-3 font-serif text-3xl">Build the property profile.</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Select the spaces that should be considered in the cleaning scope.</p>
+            <p className="eyebrow">Rooms and spaces</p><h2 className="mt-3 font-serif text-3xl">Build the property profile.</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Select the spaces that should be considered in the cleaning scope.</p>
             <div className="mt-8 grid gap-6 sm:grid-cols-2">
-              <RoomCountField label="Bedrooms" onChange={setBedrooms} value={bedrooms} />
-              <RoomCountField label="Full bathrooms" onChange={setFullBathrooms} value={fullBathrooms} />
-              <RoomCountField label="Half bathrooms" onChange={setHalfBathrooms} value={halfBathrooms} />
-              <RoomCountField label="Living rooms" onChange={setLivingRooms} value={livingRooms} />
-              <RoomCountField label="Dining rooms" onChange={setDiningRooms} value={diningRooms} />
-              <RoomCountField label="Kitchens" onChange={setKitchens} value={kitchens} />
-              <RoomCountField label="Laundry rooms" onChange={setLaundryRooms} value={laundryRooms} />
-              <RoomCountField label="Other rooms / spaces" onChange={setOtherRooms} value={otherRooms} />
+              <RoomCountField label="Bedrooms" onChange={setBedrooms} value={bedrooms} /><RoomCountField label="Full bathrooms" onChange={setFullBathrooms} value={fullBathrooms} /><RoomCountField label="Half bathrooms" onChange={setHalfBathrooms} value={halfBathrooms} /><RoomCountField label="Living rooms" onChange={setLivingRooms} value={livingRooms} /><RoomCountField label="Dining rooms" onChange={setDiningRooms} value={diningRooms} /><RoomCountField label="Kitchens" onChange={setKitchens} value={kitchens} /><RoomCountField label="Laundry rooms" onChange={setLaundryRooms} value={laundryRooms} /><RoomCountField label="Other rooms / spaces" onChange={setOtherRooms} value={otherRooms} />
             </div>
-            {otherRooms > 0 ? (
-              <label className="mt-6 grid gap-2 text-sm font-semibold">
-                Describe the other room(s) or space(s)
-                <textarea className="field min-h-24" onChange={(event) => { setOtherSpaceDetails(event.target.value); resetReview() }} placeholder="Example: game room, office, sunroom, loft, mud room." value={otherSpaceDetails} />
-                {!otherSpaceComplete ? <span className="text-xs font-normal text-red-700">Add a short description for the additional spaces.</span> : null}
-              </label>
-            ) : null}
+            {otherRooms > 0 ? <label className="mt-6 grid gap-2 text-sm font-semibold">Describe the other room(s) or space(s)<textarea className="field min-h-24" onChange={(event) => { setOtherSpaceDetails(event.target.value); resetReview() }} placeholder="Example: game room, office, sunroom, loft, mud room." value={otherSpaceDetails} />{!otherSpaceComplete ? <span className="text-xs font-normal text-red-700">Add a short description for the additional spaces.</span> : null}</label> : null}
           </section>
         ) : null}
 
         {step === 3 ? (
           <section className="pt-7">
-            <p className="eyebrow">Pets and add-ons</p>
-            <h2 className="mt-3 font-serif text-3xl">Personalize the visit.</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Share pet information, optional extras, and anything that can affect cleaning scope.</p>
+            <p className="eyebrow">Pets and add-ons</p><h2 className="mt-3 font-serif text-3xl">Personalize the visit.</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Share pet information, optional extras, and anything that can affect cleaning scope.</p>
             <div className="mt-8 rounded-2xl border border-black/10 p-5">
               <label className="flex items-center gap-3 text-sm font-medium"><input checked={petsPresent} onChange={(event) => { setPetsPresent(event.target.checked); resetReview() }} type="checkbox" />Pets will be present during service</label>
-              {petsPresent ? (
-                <label className="mt-4 grid gap-2 text-sm font-semibold">
-                  Pet type, count, and anything the cleaning team should know
-                  <textarea className="field min-h-24" onChange={(event) => { setPetDetails(event.target.value); resetReview() }} placeholder="Example: 2 dogs. Friendly and usually stay in the living room." value={petDetails} />
-                  {!petDetailsComplete ? <span className="text-xs font-normal text-red-700">Add a short pet note before continuing.</span> : null}
-                </label>
-              ) : null}
+              {petsPresent ? <label className="mt-4 grid gap-2 text-sm font-semibold">Pet type, count, and anything the cleaning team should know<textarea className="field min-h-24" onChange={(event) => { setPetDetails(event.target.value); resetReview() }} placeholder="Example: 2 dogs. Friendly and usually stay in the living room." value={petDetails} />{!petDetailsComplete ? <span className="text-xs font-normal text-red-700">Add a short pet note before continuing.</span> : null}</label> : null}
               <p className="mt-3 text-xs leading-5 text-black/55">Pets may remain in the home when they do not interfere with safe service completion. Please secure any animal that may become aggressive, highly anxious, or disruptive.</p>
             </div>
-            <fieldset className="mt-8">
-              <legend className="text-sm font-bold">Optional add-ons</legend>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                {pricingConfig.addOns.map((addOn) => (
-                  <label key={addOn.id} className="flex items-start gap-3 rounded-2xl border border-black/10 p-4 transition hover:bg-tranquility-ivory/70">
-                    <input checked={addOnIds.includes(addOn.id)} onChange={() => toggleAddOn(addOn.id)} type="checkbox" />
-                    <span className="text-sm"><span className="block font-semibold">{addOn.name}</span><span className="text-black/55">{addOn.requiresReview ? `Starting at $${addOn.price}` : `+$${addOn.price}`}</span></span>
-                  </label>
-                ))}
-              </div>
-            </fieldset>
-            <label className="mt-7 grid gap-2 text-sm font-semibold">
-              Cleaning notes or priority areas <span className="font-normal text-black/40">(optional)</span>
-              <textarea className="field min-h-28" maxLength={1200} onChange={(event) => { setServiceNotes(event.target.value); resetReview() }} placeholder="Example: Please focus extra attention on the kitchen and guest bathroom." value={serviceNotes} />
-              <span className="text-right text-xs font-normal text-black/45">{serviceNotes.length}/1200</span>
-            </label>
+            <fieldset className="mt-8"><legend className="text-sm font-bold">Optional add-ons</legend><div className="mt-3 grid gap-3 sm:grid-cols-2">{pricingConfig.addOns.map((addOn) => <label key={addOn.id} className="flex items-start gap-3 rounded-2xl border border-black/10 p-4 transition hover:bg-tranquility-ivory/70"><input checked={addOnIds.includes(addOn.id)} onChange={() => toggleAddOn(addOn.id)} type="checkbox" /><span className="text-sm"><span className="block font-semibold">{addOn.name}</span><span className="text-black/55">{addOn.requiresReview ? `Starting at $${addOn.price}` : `+$${addOn.price}`}</span></span></label>)}</div></fieldset>
+            <label className="mt-7 grid gap-2 text-sm font-semibold">Cleaning notes or priority areas <span className="font-normal text-black/40">(optional)</span><textarea className="field min-h-28" maxLength={1200} onChange={(event) => { setServiceNotes(event.target.value); resetReview() }} placeholder="Example: Please focus extra attention on the kitchen and guest bathroom." value={serviceNotes} /><span className="text-right text-xs font-normal text-black/45">{serviceNotes.length}/1200</span></label>
           </section>
         ) : null}
 
         {step === 4 ? (
           <section className="pt-7">
-            <p className="eyebrow">Schedule and customer details</p>
-            <h2 className="mt-3 font-serif text-3xl">Where and when should service happen?</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Complete the service request details. Building an estimate does not charge you; payment authorization is handled only when a reservation is finalized.</p>
+            <p className="eyebrow">Schedule and customer details</p><h2 className="mt-3 font-serif text-3xl">Where and when should service happen?</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-black/55">Complete the service request details. Building an estimate does not charge you; payment authorization is handled only when a reservation is finalized.</p>
             <div className="mt-8 grid gap-5 sm:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold"><span className="flex items-center gap-2"><UserRound className="size-4 text-tranquility-moss" aria-hidden="true" /> Full name</span><input autoComplete="name" className="field" onChange={(event) => { setFullName(event.target.value); resetReview() }} value={fullName} /></label>
               <label className="grid gap-2 text-sm font-semibold">Email<input autoComplete="email" className="field" inputMode="email" onChange={(event) => { setEmail(event.target.value); resetReview() }} type="email" value={email} />{email && !emailValid ? <span className="text-xs font-normal text-red-700">Enter a valid email address.</span> : null}</label>
@@ -288,72 +220,23 @@ export function BookingEstimator() {
               <label className="grid gap-2 text-sm font-semibold">Preferred arrival window<select className="field" onChange={(event) => { setArrivalWindow(event.target.value); resetReview() }} value={arrivalWindow}><option>Morning • 8 AM–12 PM</option><option>Afternoon • 12 PM–4 PM</option><option>Flexible • Any available window</option></select></label>
             </div>
             <label className="mt-6 grid gap-2 text-sm font-semibold">Access or arrival notes <span className="font-normal text-black/40">(optional)</span><textarea className="field min-h-24" maxLength={800} onChange={(event) => { setAccessInstructions(event.target.value); resetReview() }} placeholder="Gate instructions, parking notes, front desk, call-on-arrival preference, or other useful access information." value={accessInstructions} /></label>
-
-            {estimate?.requiresManualQuote ? (
-              <div className="mt-8 rounded-2xl bg-tranquility-stone/30 p-5">
-                <p className="font-semibold">This property needs a custom quote.</p>
-                <p className="mt-2 text-sm leading-6 text-black/58">Use the virtual consultation path so the space can be reviewed before scheduling.</p>
-                <ButtonLink className="mt-4" to="/quote">Start virtual quote <ArrowRight className="ml-2 size-4" /></ButtonLink>
-              </div>
-            ) : (
-              <div className="mt-8">
-                <Button disabled={!contactComplete || Boolean(estimateState.error)} onClick={() => setReadyForReview(true)} type="button">Review service request <ArrowRight className="ml-2 size-4" /></Button>
-                {!contactComplete ? <p className="mt-3 text-xs text-black/50">Complete the customer, address, and scheduling fields with valid information before reviewing the request.</p> : null}
-              </div>
-            )}
-
+            {estimate?.requiresManualQuote ? <div className="mt-8 rounded-2xl bg-tranquility-stone/30 p-5"><p className="font-semibold">This property needs a custom quote.</p><p className="mt-2 text-sm leading-6 text-black/58">Use the virtual consultation path so the space can be reviewed before scheduling.</p><ButtonLink className="mt-4" to="/quote">Start virtual quote <ArrowRight className="ml-2 size-4" /></ButtonLink></div> : <div className="mt-8"><Button disabled={!contactComplete || Boolean(estimateState.error)} onClick={() => setReadyForReview(true)} type="button">Review service request <ArrowRight className="ml-2 size-4" /></Button>{!contactComplete ? <p className="mt-3 text-xs text-black/50">Complete the customer, address, and scheduling fields with valid information before reviewing the request.</p> : null}</div>}
             {readyForReview && estimate ? (
               <div className="mt-8 rounded-[1.8rem] border border-tranquility-sage/30 bg-tranquility-sage/10 p-6" role="status">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="mt-1 size-5 shrink-0 text-tranquility-moss" aria-hidden="true" />
-                  <div>
-                    <p className="font-serif text-2xl">Your service request details are ready.</p>
-                    <p className="mt-2 text-sm leading-6 text-black/58">Contact Tranquility to confirm availability and finalize the reservation. The estimate remains subject to the actual property condition and requested scope.</p>
-                  </div>
-                </div>
-                <dl className="mt-6 grid gap-3 border-t border-black/8 pt-5 text-sm sm:grid-cols-2">
-                  <div><dt className="text-black/45">Customer</dt><dd className="mt-1 font-semibold">{fullName}</dd></div>
-                  <div><dt className="text-black/45">Service</dt><dd className="mt-1 font-semibold">{serviceLabel(serviceType)} • {frequencyLabel(frequency)}</dd></div>
-                  <div><dt className="text-black/45">Property</dt><dd className="mt-1 font-semibold">{squareFootage.toLocaleString()} sq ft • {city}, {postalCode}</dd></div>
-                  <div><dt className="text-black/45">Preferred time</dt><dd className="mt-1 font-semibold">{preferredDate} • {arrivalWindow}</dd></div>
-                  <div><dt className="text-black/45">Estimate</dt><dd className="mt-1 font-semibold">${estimate.total}</dd></div>
-                  <div><dt className="text-black/45">Add-ons</dt><dd className="mt-1 font-semibold">{selectedAddOns.length ? selectedAddOns.map((item) => item.name).join(', ') : 'None selected'}</dd></div>
-                </dl>
-                <div className="mt-6 flex flex-wrap gap-3 border-t border-black/8 pt-5">
-                  <a className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-tranquility-charcoal px-5 text-sm font-semibold text-white" href={siteConfig.phoneHref}><Phone className="size-4" />Call {siteConfig.shortName}</a>
-                  <a className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-5 text-sm font-semibold" href={`mailto:${siteConfig.email}?subject=Residential%20Cleaning%20Request`}><Mail className="size-4" />Email request</a>
-                </div>
+                <div className="flex items-start gap-3"><CheckCircle2 className="mt-1 size-5 shrink-0 text-tranquility-moss" aria-hidden="true" /><div><p className="font-serif text-2xl">Your service request details are ready.</p><p className="mt-2 text-sm leading-6 text-black/58">Contact Tranquility to confirm availability and finalize the reservation. The estimate remains subject to the actual property condition and requested scope.</p></div></div>
+                <dl className="mt-6 grid gap-3 border-t border-black/8 pt-5 text-sm sm:grid-cols-2"><div><dt className="text-black/45">Customer</dt><dd className="mt-1 font-semibold">{fullName}</dd></div><div><dt className="text-black/45">Service</dt><dd className="mt-1 font-semibold">{serviceLabel(serviceType)} • {frequencyLabel(frequency)}</dd></div><div><dt className="text-black/45">Property</dt><dd className="mt-1 font-semibold">{squareFootage.toLocaleString()} sq ft • {city}, {postalCode}</dd></div><div><dt className="text-black/45">Preferred time</dt><dd className="mt-1 font-semibold">{preferredDate} • {arrivalWindow}</dd></div><div><dt className="text-black/45">Estimate</dt><dd className="mt-1 font-semibold">${estimate.total}</dd></div><div><dt className="text-black/45">Add-ons</dt><dd className="mt-1 font-semibold">{selectedAddOns.length ? selectedAddOns.map((item) => item.name).join(', ') : 'None selected'}</dd></div></dl>
+                <div className="mt-6 flex flex-wrap gap-3 border-t border-black/8 pt-5"><a className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-tranquility-charcoal px-5 text-sm font-semibold text-white" href={siteConfig.phoneHref}><Phone className="size-4" />Call {siteConfig.shortName}</a><a className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-5 text-sm font-semibold" href={`mailto:${siteConfig.email}?subject=Residential%20Cleaning%20Request`}><Mail className="size-4" />Email request</a></div>
               </div>
             ) : null}
           </section>
         ) : null}
 
-        <div className="mt-9 flex flex-wrap items-center justify-between gap-3 border-t border-black/7 pt-6">
-          <Button disabled={step === 1} onClick={() => goToStep(step - 1)} type="button" variant="ghost"><ArrowLeft className="mr-2 size-4" /> Previous</Button>
-          {step < 4 ? <Button disabled={!canContinue()} onClick={() => goToStep(step + 1)} type="button">Continue <ArrowRight className="ml-2 size-4" /></Button> : null}
-        </div>
+        <div className="mt-9 flex flex-wrap items-center justify-between gap-3 border-t border-black/7 pt-6"><Button disabled={step === 1} onClick={() => goToStep(step - 1)} type="button" variant="ghost"><ArrowLeft className="mr-2 size-4" /> Previous</Button>{step < 4 ? <Button disabled={!canContinue()} onClick={() => goToStep(step + 1)} type="button">Continue <ArrowRight className="ml-2 size-4" /></Button> : null}</div>
       </div>
 
       <aside aria-live="polite" className="h-fit rounded-[2.2rem] bg-tranquility-charcoal p-7 text-white shadow-soft lg:sticky lg:top-32 sm:p-8">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-white/55">Your cleaning estimate</p>
-        {estimateState.error ? (
-          <><p className="mt-5 font-serif text-3xl">Complete the property details</p><p className="mt-4 text-sm leading-6 text-white/70">{estimateState.error}</p></>
-        ) : estimate?.requiresManualQuote ? (
-          <><p className="mt-5 font-serif text-4xl">Custom quote</p><p className="mt-4 text-sm leading-6 text-white/70">This property falls outside the instant-estimate range. A virtual consultation gives Tranquility room to review the space accurately.</p><ButtonLink className="mt-7 w-full bg-white text-tranquility-charcoal hover:bg-tranquility-ivory" to="/quote">Start custom quote <ArrowRight className="ml-2 size-4" /></ButtonLink></>
-        ) : estimate ? (
-          <>
-            <p className="mt-5 font-serif text-5xl">${estimate.total}</p>
-            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/50">Current base estimate</p>
-            <dl className="mt-6 grid gap-3 border-t border-white/10 pt-5 text-sm text-white/70">
-              <div className="flex justify-between gap-4"><dt>Cleaning service</dt><dd>${estimate.serviceSubtotal}</dd></div>
-              {estimate.frequencyDiscount > 0 ? <div className="flex justify-between gap-4"><dt>Recurring discount</dt><dd>−${estimate.frequencyDiscount}</dd></div> : null}
-              {estimate.addOnTotal > 0 ? <div className="flex justify-between gap-4"><dt>Add-ons</dt><dd>+${estimate.addOnTotal}</dd></div> : null}
-            </dl>
-            <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.055] p-4 text-xs leading-6 text-white/65"><span className="flex items-start gap-2"><Home className="mt-0.5 size-4 shrink-0 text-tranquility-stone" aria-hidden="true" />{squareFootage.toLocaleString()} sq ft • {bedrooms} bed • {fullBathrooms} full bath • {halfBathrooms} half bath</span></div>
-            {conditionReviewRecommended ? <div className="mt-4 flex items-start gap-2 rounded-2xl border border-tranquility-stone/25 bg-tranquility-stone/10 p-4 text-xs leading-6 text-white/70"><Info className="mt-0.5 size-4 shrink-0 text-tranquility-stone" aria-hidden="true" /><span>A closer review may be useful because of the property condition or specialty add-ons selected.</span></div> : null}
-            <ButtonLink className="mt-6 w-full bg-white text-tranquility-charcoal hover:bg-tranquility-ivory" to="/quote" variant="secondary">Need a closer review?</ButtonLink>
-          </>
-        ) : null}
+        {estimateState.error ? <><p className="mt-5 font-serif text-3xl">Complete the property details</p><p className="mt-4 text-sm leading-6 text-white/70">{estimateState.error}</p></> : estimate?.requiresManualQuote ? <><p className="mt-5 font-serif text-4xl">Custom quote</p><p className="mt-4 text-sm leading-6 text-white/70">This property falls outside the instant-estimate range. A virtual consultation gives Tranquility room to review the space accurately.</p><ButtonLink className="mt-7 w-full bg-white text-tranquility-charcoal hover:bg-tranquility-ivory" to="/quote">Start custom quote <ArrowRight className="ml-2 size-4" /></ButtonLink></> : estimate ? <><p className="mt-5 font-serif text-5xl">${estimate.total}</p><p className="mt-2 text-xs font-semibold uppercase tracking-[0.14em] text-white/50">Current base estimate</p><dl className="mt-6 grid gap-3 border-t border-white/10 pt-5 text-sm text-white/70"><div className="flex justify-between gap-4"><dt>Cleaning service</dt><dd>${estimate.serviceSubtotal}</dd></div>{estimate.frequencyDiscount > 0 ? <div className="flex justify-between gap-4"><dt>Recurring discount</dt><dd>−${estimate.frequencyDiscount}</dd></div> : null}{estimate.addOnTotal > 0 ? <div className="flex justify-between gap-4"><dt>Add-ons</dt><dd>+${estimate.addOnTotal}</dd></div> : null}</dl><div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.055] p-4 text-xs leading-6 text-white/65"><span className="flex items-start gap-2"><Home className="mt-0.5 size-4 shrink-0 text-tranquility-stone" aria-hidden="true" />{squareFootage.toLocaleString()} sq ft • {bedrooms} bed • {fullBathrooms} full bath • {halfBathrooms} half bath</span></div>{conditionReviewRecommended ? <div className="mt-4 flex items-start gap-2 rounded-2xl border border-tranquility-stone/25 bg-tranquility-stone/10 p-4 text-xs leading-6 text-white/70"><Info className="mt-0.5 size-4 shrink-0 text-tranquility-stone" aria-hidden="true" /><span>A closer review may be useful because of the property condition or specialty add-ons selected.</span></div> : null}<ButtonLink className="mt-6 w-full bg-white text-tranquility-charcoal hover:bg-tranquility-ivory" to="/quote" variant="secondary">Need a closer review?</ButtonLink></> : null}
         <div className="mt-6 border-t border-white/10 pt-5"><p className="flex items-start gap-2 text-xs leading-6 text-white/55"><ShieldCheck className="mt-0.5 size-4 shrink-0" aria-hidden="true" />This is a planning estimate based on the details selected. Property condition, requested scope, and specialty items can change the final service price.</p></div>
       </aside>
     </div>

@@ -21,7 +21,7 @@ function assertValidInput(input: BookingEstimateInput, rules: PricingRules) {
     throw new RangeError(`Square footage must be at least ${rules.minimumSquareFeet}.`)
   }
 
-  if (!hasOwn(rules.serviceMultipliers, input.serviceType)) {
+  if (!hasOwn(rules.baseServicePrices, input.serviceType)) {
     throw new Error(`Unknown service type: ${String(input.serviceType)}`)
   }
 
@@ -53,11 +53,6 @@ function assertValidInput(input: BookingEstimateInput, rules: PricingRules) {
   }
 }
 
-function getBasePrice(squareFootage: number, rules: PricingRules) {
-  const tier = rules.baseBySquareFootage.find(({ max }) => squareFootage <= max)
-  return tier?.price ?? 0
-}
-
 export function calculateBookingEstimate(
   input: BookingEstimateInput,
   rules: PricingRules = pricingConfig,
@@ -75,26 +70,12 @@ export function calculateBookingEstimate(
     }
   }
 
-  const base = getBasePrice(input.squareFootage, rules)
-  const roomAdjustments =
-    input.bedrooms * rules.roomIncrements.bedroom +
-    input.fullBathrooms * rules.roomIncrements.fullBathroom +
-    input.halfBathrooms * rules.roomIncrements.halfBathroom +
-    input.livingRooms * rules.roomIncrements.livingRoom +
-    input.diningRooms * rules.roomIncrements.diningRoom +
-    input.kitchens * rules.roomIncrements.kitchen +
-    input.laundryRooms * rules.roomIncrements.laundryRoom +
-    input.otherRooms * rules.roomIncrements.otherRoom +
-    (input.petsPresent ? rules.petPresenceIncrement : 0)
-
+  const serviceSubtotal = rules.baseServicePrices[input.serviceType]
   const uniqueAddOnIds = new Set(input.addOnIds)
   const addOnTotal = rules.addOns
     .filter(({ id }) => uniqueAddOnIds.has(id))
-    .reduce((sum, addOn) => sum + addOn.price, 0)
+    .reduce((sum, addOn) => sum + addOn.prices[input.serviceType], 0)
 
-  const serviceSubtotal = Math.round(
-    (base + roomAdjustments) * rules.serviceMultipliers[input.serviceType],
-  )
   const frequencyDiscount = Math.round(
     serviceSubtotal * rules.frequencyDiscounts[input.frequency],
   )

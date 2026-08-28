@@ -23,29 +23,15 @@ export interface BookingEstimateInput extends RoomProfile {
 export interface PricingAddOn {
   id: string
   name: string
-  price: number
+  prices: Readonly<Record<ServiceType, number>>
+  priceLabel?: string
   requiresReview?: boolean
 }
 
 export interface PricingRules {
   minimumSquareFeet: number
-  baseBySquareFootage: readonly {
-    max: number
-    price: number
-  }[]
+  baseServicePrices: Readonly<Record<ServiceType, number>>
   manualQuoteAboveSquareFeet: number
-  serviceMultipliers: Readonly<Record<ServiceType, number>>
-  roomIncrements: Readonly<{
-    bedroom: number
-    fullBathroom: number
-    halfBathroom: number
-    livingRoom: number
-    diningRoom: number
-    kitchen: number
-    laundryRoom: number
-    otherRoom: number
-  }>
-  petPresenceIncrement: number
   frequencyDiscounts: Readonly<Record<Frequency, number>>
   addOns: readonly PricingAddOn[]
 }
